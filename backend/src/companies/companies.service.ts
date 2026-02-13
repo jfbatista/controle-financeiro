@@ -4,18 +4,20 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getCompanyForUser(userId: number) {
-    const company = await this.prisma.company.findFirst({
-      where: { ownerUserId: userId },
+    // Find the user's company through their membership
+    const userCompany = await this.prisma.userCompany.findFirst({
+      where: { userId },
+      include: { company: true },
     });
 
-    if (!company) {
+    if (!userCompany || !userCompany.company) {
       throw new NotFoundException('Empresa não encontrada para o usuário');
     }
 
-    return company;
+    return userCompany.company;
   }
 
   async updateCompanyForUser(userId: number, dto: UpdateCompanyDto) {
@@ -27,6 +29,12 @@ export class CompaniesService {
         name: dto.name ?? company.name,
         document: dto.document ?? company.document,
         contactEmail: dto.contactEmail ?? company.contactEmail,
+        smtpHost: dto.smtpHost ?? company.smtpHost,
+        smtpPort: dto.smtpPort !== undefined ? Number(dto.smtpPort) : company.smtpPort,
+        smtpUser: dto.smtpUser ?? company.smtpUser,
+        smtpPass: dto.smtpPass ?? company.smtpPass, // TODO: encrypt?
+        smtpSecure: dto.smtpSecure ?? company.smtpSecure,
+        smtpFrom: dto.smtpFrom ?? company.smtpFrom,
       },
     });
 

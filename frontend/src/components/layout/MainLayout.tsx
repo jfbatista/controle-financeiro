@@ -29,6 +29,7 @@ import {
   Menu as MenuIcon,
   Wallet,
   Users,
+  Settings,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
 import { Permission } from '../../config/permissions';
@@ -45,6 +46,7 @@ const LinkItems = [
   { name: 'Formas de Pag.', icon: CreditCard, path: '/payment-methods', permission: Permission.PAYMENT_METHOD_VIEW },
   { name: 'Usuários', icon: Wallet, path: '/settings/users', permission: Permission.USER_VIEW },
   { name: 'Grupos', icon: Users, path: '/settings/groups', permission: Permission.USER_VIEW },
+  { name: 'Empresa', icon: Settings, path: '/settings/company', permission: Permission.COMPANY_MANAGE },
 ];
 
 export function MainLayout({ children }: MainLayoutProps) {

@@ -36,6 +36,9 @@ export enum Permission {
     RECURRING_BILL_CREATE = 'RECURRING_BILL_CREATE',
     RECURRING_BILL_EDIT = 'RECURRING_BILL_EDIT',
     RECURRING_BILL_DELETE = 'RECURRING_BILL_DELETE',
+
+    // Company
+    COMPANY_MANAGE = 'COMPANY_MANAGE',
 }
 
 export const RolePermissions: Record<Role, Permission[]> = {
@@ -50,6 +53,7 @@ export const RolePermissions: Record<Role, Permission[]> = {
         Permission.USER_DELETE,
         Permission.REPORT_VIEW,
         Permission.SETTINGS_MANAGE,
+        Permission.COMPANY_MANAGE,
         Permission.CATEGORY_VIEW,
         Permission.CATEGORY_CREATE,
         Permission.CATEGORY_EDIT,
@@ -74,6 +78,7 @@ export const RolePermissions: Record<Role, Permission[]> = {
         Permission.USER_DELETE,
         Permission.REPORT_VIEW,
         Permission.SETTINGS_MANAGE,
+        Permission.COMPANY_MANAGE,
         Permission.CATEGORY_VIEW,
         Permission.CATEGORY_CREATE,
         Permission.CATEGORY_EDIT,

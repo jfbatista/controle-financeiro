@@ -1,11 +1,14 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { FirstUserPage } from './pages/FirstUserPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
 import { ManageUsersPage } from './pages/ManageUsersPage';
 import { ManageGroupsPage } from './pages/ManageGroupsPage';
+import { CompanySettingsPage } from './pages/CompanySettingsPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RecurringBillsPage } from './pages/RecurringBillsPage';
 import { MainLayout } from './components/layout/MainLayout';
@@ -24,6 +27,8 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/first-access" element={<FirstUserPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route
         path="/dashboard"
         element={
@@ -100,6 +105,16 @@ function App() {
           <ProtectedRoute>
             <MainLayout>
               <ManageGroupsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings/company"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <CompanySettingsPage />
             </MainLayout>
           </ProtectedRoute>
         }

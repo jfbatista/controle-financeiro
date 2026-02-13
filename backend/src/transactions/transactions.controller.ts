@@ -10,6 +10,7 @@ import {
   Query,
   UseGuards,
   Request,
+  Res,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -43,6 +44,35 @@ export class TransactionsController {
       categoryId: categoryId ? Number(categoryId) : undefined,
       paymentMethodId: paymentMethodId ? Number(paymentMethodId) : undefined,
     });
+  }
+
+  @Get('export')
+  @RequirePermissions(Permission.TRANSACTION_VIEW)
+  async export(
+    @Request() req,
+    @Query('from') from: string | undefined,
+    @Query('to') to: string | undefined,
+    @Query('type') type: TransactionType | undefined,
+    @Query('categoryId') categoryId: string | undefined,
+    @Query('paymentMethodId') paymentMethodId: string | undefined,
+    @Res() res,
+  ) {
+    const buffer = await this.transactionsService.export({
+      companyId: req.user.companyId,
+      from,
+      to,
+      type,
+      categoryId: categoryId ? Number(categoryId) : undefined,
+      paymentMethodId: paymentMethodId ? Number(paymentMethodId) : undefined,
+    });
+
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': 'attachment; filename=lancamentos.xlsx',
+      'Content-Length': buffer.length,
+    });
+
+    res.end(buffer);
   }
 
   @Post()

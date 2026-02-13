@@ -16,6 +16,7 @@ export enum Permission {
 
     // Settings (General)
     SETTINGS_MANAGE = 'SETTINGS_MANAGE',
+    COMPANY_MANAGE = 'COMPANY_MANAGE',
 
     // Categories
     CATEGORY_VIEW = 'CATEGORY_VIEW',

@@ -11,6 +11,30 @@ export class UpdateCompanyDto {
 
   @IsOptional()
   @IsEmail()
+  @IsOptional()
+  @IsEmail()
   contactEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  smtpHost?: string;
+
+  @IsOptional()
+  smtpPort?: number;
+
+  @IsOptional()
+  @IsString()
+  smtpUser?: string;
+
+  @IsOptional()
+  @IsString()
+  smtpPass?: string;
+
+  @IsOptional()
+  smtpSecure?: boolean;
+
+  @IsOptional()
+  @IsString()
+  smtpFrom?: string;
 }
 

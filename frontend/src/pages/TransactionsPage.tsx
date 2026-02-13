@@ -30,9 +30,10 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Plus, Filter, Trash2, Edit2, Check } from 'lucide-react';
+import { Plus, Filter, Trash2, Edit2, Check, Download } from 'lucide-react';
 import { Permission } from '../config/permissions';
 import { useAuthStore } from '../store/auth';
+import { saveAs } from 'file-saver';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
 
@@ -109,6 +110,24 @@ export function TransactionsPage() {
       setTransactions(data);
     } catch (e: any) {
       toast.error('Erro ao carregar lançamentos.', e?.message);
+    }
+  }
+
+  async function handleExport() {
+    try {
+      const params = new URLSearchParams();
+      if (filterFrom) params.append('from', filterFrom);
+      if (filterTo) params.append('to', filterTo);
+      if (filterType !== 'ALL') params.append('type', filterType);
+
+      const response = await api.get('/transactions/export?' + params.toString(), {
+        responseType: 'blob'
+      });
+
+      saveAs(new Blob([response as any]), 'lancamentos.xlsx');
+      toast.success('Download iniciado!');
+    } catch (e: any) {
+      toast.error('Erro ao exportar', e?.message);
     }
   }
 
@@ -309,6 +328,9 @@ export function TransactionsPage() {
           </Box>
           <Button size="sm" onClick={loadTransactions} leftIcon={<Filter size={14} />}>
             Filtrar
+          </Button>
+          <Button size="sm" onClick={handleExport} leftIcon={<Download size={14} />} colorScheme="green" variant="outline">
+            Exportar Excel
           </Button>
         </Flex>
       </Box>

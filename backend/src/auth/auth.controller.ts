@@ -4,7 +4,7 @@ import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   login(@Body() dto: LoginDto) {
@@ -14,6 +14,16 @@ export class AuthController {
   @Post('refresh')
   refresh(@Body('refreshToken') refreshToken: string) {
     return this.authService.refresh(refreshToken);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() body: { token: string; newPassword: string }) {
+    return this.authService.resetPassword(body.token, body.newPassword);
   }
 }
 

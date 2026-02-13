@@ -78,6 +78,12 @@ export function LoginPage() {
               Entrar
             </Button>
 
+            <Flex justify="center" width="full">
+              <Link href="/forgot-password" color="brand.500" fontSize="sm">
+                Esqueci minha senha
+              </Link>
+            </Flex>
+
             <Text fontSize="sm" color="gray.600">
               Primeiro uso?{' '}
               <Link href="/first-access" color="brand.500" fontWeight="bold">

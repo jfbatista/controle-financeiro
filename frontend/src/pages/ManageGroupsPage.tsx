@@ -45,6 +45,7 @@ const PERMISSION_LABELS: Record<Permission, string> = {
     [Permission.USER_DELETE]: 'Excluir Usuários',
     [Permission.REPORT_VIEW]: 'Visualizar Relatórios',
     [Permission.SETTINGS_MANAGE]: 'Gerenciar Configurações',
+    [Permission.COMPANY_MANAGE]: 'Gerenciar Empresa',
     [Permission.CATEGORY_VIEW]: 'Visualizar Categorias',
     [Permission.CATEGORY_CREATE]: 'Criar Categorias',
     [Permission.CATEGORY_EDIT]: 'Editar Categorias',
@@ -93,6 +94,7 @@ const PERMISSION_GROUPS = {
     'Outros': [
         Permission.REPORT_VIEW,
         Permission.SETTINGS_MANAGE,
+        Permission.COMPANY_MANAGE,
     ],
 };
 
