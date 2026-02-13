@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuthApi } from '../services/authFetch';
+import { useCustomToast } from '../hooks/useCustomToast';
 import {
   BarChart,
   Bar,
@@ -50,6 +51,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 export function DashboardPage() {
   const api = useAuthApi();
+  const toast = useCustomToast();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
 
@@ -60,7 +62,7 @@ export function DashboardPage() {
         const result = await api.get<DashboardData>('/reports/dashboard');
         setData(result);
       } catch (e: any) {
-        alert(`Erro ao carregar dashboard: ${e?.message || ''}`);
+        toast.error(`Erro ao carregar dashboard: ${e?.message || ''}`);
       } finally {
         setLoading(false);
       }

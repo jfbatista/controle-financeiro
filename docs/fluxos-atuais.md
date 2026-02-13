@@ -104,3 +104,27 @@
   - Ao acessar `/dashboard`, o frontend chama `/reports/dashboard`.
   - Exibe os valores em reais, com destaque visual para resultado positivo/negativo.
 
+### 7. Gestão de Usuários
+
+- **Objetivo**: Convidar e gerenciar membros da equipe.
+- **Telas/rotas**:
+  - Frontend: `/settings/users`.
+  - Backend: `GET/POST/PUT/DELETE /users`.
+- **Passos**:
+  - Administrador acessa a tela de Usuários.
+  - Clicar em "Novo Usuário" para convidar alguém por e-mail e atribuir um Grupo inicial.
+  - Pode editar o grupo ou inativar o acesso de usuários existentes.
+  - Usuários inativos não conseguem fazer login.
+
+### 8. Gestão de Grupos e Permissões
+
+- **Objetivo**: Criar perfis de acesso personalizados.
+- **Telas/rotas**:
+  - Frontend: `/settings/groups`.
+  - Backend: `GET/POST/PUT/DELETE /groups`.
+- **Passos**:
+  - Administrador acessa a tela de Grupos.
+  - Visualiza grupos padrão (Admin, Editor, Viewer) e personalizados.
+  - Ao criar/editar, seleciona permissões específicas (ex.: Ver Lançamentos, Editar Categorias).
+  - Pode excluir grupos que não tenham usuários vinculados.
+

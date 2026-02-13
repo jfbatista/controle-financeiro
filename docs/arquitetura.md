@@ -45,11 +45,16 @@ Entidades principais (detalhadas em `docs/backend/entidades.md`):
 - `PaymentMethod`
 - `Transaction`
 - `RecurringBill`
+- `Group`
+- `GroupPermission`
 
 ### Segurança
 
 - Hash de senha (ex.: bcrypt).
 - Tokens JWT assinados com segredos em variáveis de ambiente.
+- **RBAC Granular**:
+  - Permissões baseadas em Grupos (ex.: `TRANSACTION_VIEW`, `USER_EDIT`).
+  - Guards globais e locais (`PermissionsGuard`) para proteger rotas.
 - CORS restrito para domínios conhecidos.
 - Rate limiting em rotas sensíveis (login).
 - Logs de auditoria para operações críticas (opcional em MVP).

@@ -44,14 +44,17 @@ lojas locais, MEIs etc.).
   - Gráfico de barras (entradas x saídas).
   - Gráfico de pizza (distribuição de despesas por categoria).
 
+- **Gestão de Acesso (RBAC)**
+  - **Múltiplos usuários** por empresa.
+  - **Grupos de Permissão** personalizáveis (ex: Admin, Editor, Viewer).
+  - Controle granular de acesso (visualizar, criar, editar, excluir) por módulo.
+
 - **Relatórios básicos**
   - Lista de lançamentos com filtros.
   - Resumo por período (ex.: mês atual, mês anterior).
 
 ### Futuras Evoluções (pós-MVP)
 
-- Múltiplos usuários por empresa.
-- Perfis de permissão.
 - Exportação para Excel/CSV.
 - Relatórios mais avançados (ex.: DRE simplificado).
 - Plano de assinatura (modo SaaS).

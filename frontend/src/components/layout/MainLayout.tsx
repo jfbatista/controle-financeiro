@@ -28,19 +28,23 @@ import {
   LogOut,
   Menu as MenuIcon,
   Wallet,
+  Users,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
+import { Permission } from '../../config/permissions';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 const LinkItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-  { name: 'Lançamentos', icon: Receipt, path: '/transactions' },
-  { name: 'Contas Fixas', icon: CalendarClock, path: '/recurring-bills' },
-  { name: 'Categorias', icon: Tags, path: '/categories' },
-  { name: 'Formas de Pag.', icon: CreditCard, path: '/payment-methods' },
+  { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard', permission: Permission.REPORT_VIEW },
+  { name: 'Lançamentos', icon: Receipt, path: '/transactions', permission: Permission.TRANSACTION_VIEW },
+  { name: 'Contas Fixas', icon: CalendarClock, path: '/recurring-bills', permission: Permission.RECURRING_BILL_VIEW },
+  { name: 'Categorias', icon: Tags, path: '/categories', permission: Permission.CATEGORY_VIEW },
+  { name: 'Formas de Pag.', icon: CreditCard, path: '/payment-methods', permission: Permission.PAYMENT_METHOD_VIEW },
+  { name: 'Usuários', icon: Wallet, path: '/settings/users', permission: Permission.USER_VIEW },
+  { name: 'Grupos', icon: Users, path: '/settings/groups', permission: Permission.USER_VIEW },
 ];
 
 export function MainLayout({ children }: MainLayoutProps) {
@@ -81,6 +85,7 @@ interface SidebarProps {
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const location = useLocation();
+  const can = useAuthStore((state) => state.can);
 
   return (
     <Box
@@ -109,7 +114,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         />
       </Flex>
       <VStack align="stretch" spacing={1} px={4}>
-        {LinkItems.map((link) => {
+        {LinkItems.filter(link => !link.permission || can(link.permission)).map((link) => {
           const isActive = location.pathname === link.path;
           return (
             <ChakraLink
@@ -205,9 +210,6 @@ const MobileNav = ({ onOpen }: MobileProps) => {
                   ml="2"
                 >
                   <Text fontSize="sm">{user?.name}</Text>
-                  <Text fontSize="xs" color="gray.600">
-                    Admin
-                  </Text>
                 </VStack>
               </HStack>
             </MenuButton>

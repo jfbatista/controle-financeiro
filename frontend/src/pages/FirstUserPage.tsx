@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { httpPost } from '../services/http';
+import { useCustomToast } from '../hooks/useCustomToast';
 import {
   Box,
   Button,
@@ -9,7 +10,6 @@ import {
   FormControl,
   FormLabel,
   VStack,
-  useToast,
   Container,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
@@ -30,7 +30,7 @@ export function FirstUserPage() {
   const [password, setPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
-  const toast = useToast();
+  const toast = useCustomToast();
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,22 +43,10 @@ export function FirstUserPage() {
         password,
         companyName,
       });
-      toast({
-        title: 'Sucesso!',
-        description: 'Usuário inicial criado. Faça login para continuar.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success('Sucesso!', 'Usuário inicial criado. Faça login para continuar.');
       navigate('/');
     } catch (error: any) {
-      toast({
-        title: 'Erro ao criar usuário',
-        description: error?.message || 'Verifique os dados e tente novamente.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error('Erro ao criar usuário', error?.message || 'Verifique os dados e tente novamente.');
     } finally {
       setLoading(false);
     }

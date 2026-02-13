@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuthApi } from '../services/authFetch';
+import { useCustomToast } from '../hooks/useCustomToast';
 import {
     Box,
     Heading,
@@ -18,7 +19,6 @@ import {
     VStack,
     FormControl,
     FormLabel,
-    useToast,
     IconButton,
     Text,
 } from '@chakra-ui/react';
@@ -44,7 +44,7 @@ interface RecurringBill {
 
 export function RecurringBillsPage() {
     const api = useAuthApi();
-    const toast = useToast();
+    const toast = useCustomToast();
     const [bills, setBills] = useState<RecurringBill[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
 
@@ -59,13 +59,7 @@ export function RecurringBillsPage() {
             const cats = await api.get<Category[]>('/categories');
             setCategories(cats);
         } catch (e: any) {
-            toast({
-                title: 'Erro ao carregar categorias.',
-                description: e?.message,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            toast.error('Erro ao carregar categorias.', e?.message);
         }
     }
 
@@ -74,13 +68,7 @@ export function RecurringBillsPage() {
             const data = await api.get<RecurringBill[]>('/recurring-bills');
             setBills(data);
         } catch (e: any) {
-            toast({
-                title: 'Erro ao carregar contas.',
-                description: e?.message,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            toast.error('Erro ao carregar contas.', e?.message);
         }
     }
 
@@ -103,20 +91,9 @@ export function RecurringBillsPage() {
             setDescription('');
             setDueDay('');
             await loadBills();
-            toast({
-                title: 'Conta fixa criada!',
-                status: 'success',
-                duration: 2000,
-                isClosable: true,
-            });
+            toast.success('Conta fixa criada!');
         } catch (e: any) {
-            toast({
-                title: 'Erro ao criar conta.',
-                description: e?.message,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            toast.error('Erro ao criar conta.', e?.message);
         }
     }
 
@@ -125,20 +102,9 @@ export function RecurringBillsPage() {
         try {
             await api.del(`/recurring-bills/${id}`);
             await loadBills();
-            toast({
-                title: 'Conta excluída.',
-                status: 'info',
-                duration: 2000,
-                isClosable: true,
-            });
+            toast.info('Conta excluída.');
         } catch (e: any) {
-            toast({
-                title: 'Erro ao excluir.',
-                description: e?.message,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            toast.error('Erro ao excluir.', e?.message);
         }
     }
 

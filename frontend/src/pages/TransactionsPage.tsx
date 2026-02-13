@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuthApi } from '../services/authFetch';
+import { useCustomToast } from '../hooks/useCustomToast';
 import {
   Box,
   Heading,
@@ -18,9 +19,20 @@ import {
   VStack,
   FormControl,
   FormLabel,
-  useToast,
+  IconButton,
+  HStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { Plus, Filter } from 'lucide-react';
+import { Plus, Filter, Trash2, Edit2, Check } from 'lucide-react';
+import { Permission } from '../config/permissions';
+import { useAuthStore } from '../store/auth';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
 
@@ -43,15 +55,19 @@ interface Transaction {
   description?: string | null;
   category: Category;
   paymentMethod: PaymentMethod;
+  categoryId: number;
+  paymentMethodId: number;
 }
 
 export function TransactionsPage() {
   const api = useAuthApi();
-  const toast = useToast();
+  const toast = useCustomToast();
+  const can = useAuthStore((state) => state.can);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
 
+  // Create/Filter States
   const [type, setType] = useState<TransactionType>('INCOME');
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [amount, setAmount] = useState('');
@@ -63,6 +79,10 @@ export function TransactionsPage() {
   const [filterTo, setFilterTo] = useState('');
   const [filterType, setFilterType] = useState<'ALL' | TransactionType>('ALL');
 
+  // Edit States
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editingItem, setEditingItem] = useState<any | null>(null);
+
   async function loadLookups() {
     try {
       const [cats, pms] = await Promise.all([
@@ -72,13 +92,7 @@ export function TransactionsPage() {
       setCategories(cats);
       setMethods(pms);
     } catch (e: any) {
-      toast({
-        title: 'Erro ao carregar dados.',
-        description: e?.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Erro ao carregar dados.', e?.message);
     }
   }
 
@@ -94,13 +108,7 @@ export function TransactionsPage() {
       );
       setTransactions(data);
     } catch (e: any) {
-      toast({
-        title: 'Erro ao carregar lançamentos.',
-        description: e?.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Erro ao carregar lançamentos.', e?.message);
     }
   }
 
@@ -122,29 +130,64 @@ export function TransactionsPage() {
       });
       setAmount('');
       setDescription('');
-      // Keep date and type as is for convenience
       await loadTransactions();
-      toast({
-        title: 'Lançamento criado!',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
+      toast.success('Lançamento criado!');
     } catch (e: any) {
-      toast({
-        title: 'Erro ao criar lançamento.',
-        description: e?.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
+      toast.error('Erro ao criar lançamento.', e?.message);
+    }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm('Deseja excluir este lançamento?')) return;
+    try {
+      await api.del(`/transactions/${id}`);
+      await loadTransactions();
+      toast.info('Excluído');
+    } catch (e: any) {
+      toast.error('Erro ao excluir', e?.message);
+    }
+  }
+
+  function openEditModal(t: Transaction) {
+    setEditingItem({
+      id: t.id,
+      type: t.type,
+      date: new Date(t.date).toISOString().slice(0, 10),
+      amount: t.amount,
+      categoryId: t.category?.id || '',
+      paymentMethodId: t.paymentMethod?.id || '',
+      description: t.description || '',
+    });
+    onOpen();
+  }
+
+  async function handleUpdate() {
+    if (!editingItem) return;
+    try {
+      await api.patch(`/transactions/${editingItem.id}`, {
+        type: editingItem.type,
+        date: new Date(editingItem.date).toISOString(),
+        amount: Number(editingItem.amount),
+        categoryId: Number(editingItem.categoryId),
+        paymentMethodId: Number(editingItem.paymentMethodId),
+        description: editingItem.description,
       });
+      onClose();
+      await loadTransactions();
+      toast.success('Atualizado!');
+    } catch (e: any) {
+      toast.error('Erro ao atualizar', e?.message);
     }
   }
 
   const incomeCategories = categories.filter((c) => c.type === 'INCOME');
   const expenseCategories = categories.filter((c) => c.type === 'EXPENSE');
-  const visibleCategories =
-    type === 'INCOME' ? incomeCategories : expenseCategories;
+
+  // Helper for visible categories in Create Form
+  const visibleCategories = type === 'INCOME' ? incomeCategories : expenseCategories;
+
+  // Helper for visible categories in Edit Modal
+  const editVisibleCategories = editingItem?.type === 'INCOME' ? incomeCategories : expenseCategories;
 
   return (
     <Box>
@@ -282,6 +325,7 @@ export function TransactionsPage() {
                 <Th>Forma Pag.</Th>
                 <Th isNumeric>Valor</Th>
                 <Th>Descrição</Th>
+                <Th textAlign="center">Ações</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -296,14 +340,38 @@ export function TransactionsPage() {
                   <Td>{t.category?.name}</Td>
                   <Td>{t.paymentMethod?.name}</Td>
                   <Td isNumeric fontWeight="bold" color={t.type === 'INCOME' ? 'green.600' : 'red.600'}>
-                    {t.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    {Number(t.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </Td>
                   <Td color="gray.600" fontSize="sm">{t.description}</Td>
+                  <Td textAlign="center">
+                    <HStack justify="center" spacing={2}>
+                      {can(Permission.TRANSACTION_EDIT) && (
+                        <IconButton
+                          aria-label="Editar"
+                          icon={<Edit2 size={16} />}
+                          size="sm"
+                          variant="ghost"
+                          colorScheme="blue"
+                          onClick={() => openEditModal(t)}
+                        />
+                      )}
+                      {can(Permission.TRANSACTION_DELETE) && (
+                        <IconButton
+                          aria-label="Excluir"
+                          icon={<Trash2 size={16} />}
+                          size="sm"
+                          variant="ghost"
+                          colorScheme="red"
+                          onClick={() => handleDelete(t.id)}
+                        />
+                      )}
+                    </HStack>
+                  </Td>
                 </Tr>
               ))}
               {transactions.length === 0 && (
                 <Tr>
-                  <Td colSpan={6} textAlign="center" py="8" color="gray.500">
+                  <Td colSpan={7} textAlign="center" py="8" color="gray.500">
                     Nenhum lançamento encontrado.
                   </Td>
                 </Tr>
@@ -312,6 +380,88 @@ export function TransactionsPage() {
           </Table>
         </TableContainer>
       </Box>
+
+      {/* Edit Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Editar Lançamento</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {editingItem && (
+              <VStack spacing={4}>
+                <Flex gap="4" w="100%">
+                  <FormControl>
+                    <FormLabel>Tipo</FormLabel>
+                    <Select
+                      value={editingItem.type}
+                      onChange={(e) => setEditingItem({ ...editingItem, type: e.target.value })}
+                    >
+                      <option value="INCOME">Entrada</option>
+                      <option value="EXPENSE">Saída</option>
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Data</FormLabel>
+                    <Input
+                      type="date"
+                      value={editingItem.date}
+                      onChange={(e) => setEditingItem({ ...editingItem, date: e.target.value })}
+                    />
+                  </FormControl>
+                </Flex>
+
+                <Flex gap="4" w="100%">
+                  <FormControl>
+                    <FormLabel>Valor</FormLabel>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={editingItem.amount}
+                      onChange={(e) => setEditingItem({ ...editingItem, amount: e.target.value })}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Categoria</FormLabel>
+                    <Select
+                      value={editingItem.categoryId}
+                      onChange={(e) => setEditingItem({ ...editingItem, categoryId: e.target.value })}
+                    >
+                      {editVisibleCategories.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Flex>
+
+                <FormControl>
+                  <FormLabel>Forma de Pagamento</FormLabel>
+                  <Select
+                    value={editingItem.paymentMethodId}
+                    onChange={(e) => setEditingItem({ ...editingItem, paymentMethodId: e.target.value })}
+                  >
+                    {methods.map((m) => (
+                      <option key={m.id} value={m.id}>{m.name}</option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Descrição</FormLabel>
+                  <Input
+                    value={editingItem.description}
+                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                  />
+                </FormControl>
+              </VStack>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>Cancelar</Button>
+            <Button colorScheme="brand" onClick={handleUpdate} leftIcon={<Check size={18} />}>Salvar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

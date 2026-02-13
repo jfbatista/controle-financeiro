@@ -7,7 +7,7 @@ import type { CurrentUserData } from '../common/decorators/current-user.decorato
 @UseGuards(JwtAuthGuard)
 @Controller('reports')
 export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+  constructor(private readonly reportsService: ReportsService) { }
 
   @Get('dashboard')
   dashboard(
@@ -15,7 +15,7 @@ export class ReportsController {
     @Query('from') from?: string,
     @Query('to') to?: string,
   ) {
-    return this.reportsService.dashboard(user.userId, from, to);
+    return this.reportsService.dashboard(user.companyId, from, to);
   }
 }
 

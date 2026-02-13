@@ -46,6 +46,46 @@ export async function httpPost<TResponse, TBody = unknown>(
   return handleResponse<TResponse>(response);
 }
 
+export async function httpPut<TResponse, TBody = unknown>(
+  path: string,
+  body: TBody,
+  options?: { token?: string },
+): Promise<TResponse> {
+  const url = `${apiConfig.baseUrl}${path}`;
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  if (options?.token) {
+    headers.Authorization = `Bearer ${options.token}`;
+  }
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(body),
+  });
+  return handleResponse<TResponse>(response);
+}
+
+export async function httpPatch<TResponse, TBody = unknown>(
+  path: string,
+  body: TBody,
+  options?: { token?: string },
+): Promise<TResponse> {
+  const url = `${apiConfig.baseUrl}${path}`;
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  if (options?.token) {
+    headers.Authorization = `Bearer ${options.token}`;
+  }
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(body),
+  });
+  return handleResponse<TResponse>(response);
+}
+
 export async function httpGet<TResponse>(
   path: string,
   options?: { token?: string },

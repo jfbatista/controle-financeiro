@@ -1,5 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useAuthApi } from '../services/authFetch';
+import { useCustomToast } from '../hooks/useCustomToast';
+import {
+  Box,
+  Heading,
+  Flex,
+  Input,
+  Select,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  Badge,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  useDisclosure,
+  HStack,
+} from '@chakra-ui/react';
+import { Plus, Trash2, Edit2, Check } from 'lucide-react';
 
 interface Category {
   id: number;
@@ -10,11 +40,18 @@ interface Category {
 
 export function CategoriesPage() {
   const api = useAuthApi();
+  const toast = useCustomToast();
   const [items, setItems] = useState<Category[]>([]);
-  const [name, setName] = useState('');
-  const [type, setType] = useState<'INCOME' | 'EXPENSE'>('INCOME');
-  const [color, setColor] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Form States (Create)
+  const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState<'INCOME' | 'EXPENSE'>('INCOME');
+  const [newColor, setNewColor] = useState('');
+
+  // Edit States
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editingItem, setEditingItem] = useState<Category | null>(null);
 
   async function load() {
     setLoading(true);
@@ -22,7 +59,13 @@ export function CategoriesPage() {
       const data = await api.get<Category[]>('/categories');
       setItems(data);
     } catch (e: any) {
-      alert(`Erro ao carregar categorias: ${e?.message || ''}`);
+      toast({
+        title: 'Erro ao carregar categorias',
+        description: e?.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -36,102 +79,228 @@ export function CategoriesPage() {
     e.preventDefault();
     try {
       await api.post<Category, any>('/categories', {
-        name,
-        type,
-        color: color || undefined,
+        name: newName,
+        type: newType,
+        color: newColor || undefined,
       });
-      setName('');
-      setColor('');
+      setNewName('');
+      setNewColor('');
       await load();
+      toast.success('Categoria criada!');
     } catch (e: any) {
-      alert(`Erro ao criar categoria: ${e?.message || ''}`);
+      toast.error('Erro ao criar', e?.message);
+    }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm('Tem certeza que deseja excluir esta categoria?')) return;
+    try {
+      await api.del(`/categories/${id}`);
+      await load();
+      toast.info('Categoria excluída');
+    } catch (e: any) {
+      toast.error('Erro ao excluir', e?.message);
+    }
+  }
+
+  function openEditModal(item: Category) {
+    setEditingItem(item);
+    onOpen();
+  }
+
+  async function handleUpdate() {
+    if (!editingItem) return;
+    try {
+      await api.patch(`/categories/${editingItem.id}`, {
+        name: editingItem.name,
+        type: editingItem.type,
+        color: editingItem.color,
+      });
+      onClose();
+      await load();
+      toast({
+        title: 'Categoria atualizada',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (e: any) {
+      toast({
+        title: 'Erro ao atualizar',
+        description: e?.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
 
   return (
-    <div>
-      <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>
-        Categorias
-      </h2>
-      <form
-        onSubmit={handleCreate}
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-          marginBottom: '1rem',
-        }}
-      >
-        <input
-          required
-          placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ padding: '0.4rem', minWidth: 140 }}
-        />
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as any)}
-          style={{ padding: '0.4rem' }}
-        >
-          <option value="INCOME">Receita</option>
-          <option value="EXPENSE">Despesa</option>
-        </select>
-        <input
-          placeholder="Cor (opcional)"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          style={{ padding: '0.4rem', minWidth: 120 }}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: '0.4rem 0.8rem',
-            backgroundColor: '#6d28d9',
-            color: 'white',
-            border: 'none',
-            borderRadius: 4,
-            cursor: 'pointer',
-          }}
-        >
-          Adicionar
-        </button>
-      </form>
+    <Box>
+      <Heading size="lg" mb="6">Categorias</Heading>
 
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: '0.85rem',
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Nome
-            </th>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Tipo
-            </th>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Cor
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((c) => (
-            <tr key={c.id}>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>{c.name}</td>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>
-                {c.type === 'INCOME' ? 'Receita' : 'Despesa'}
-              </td>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>{c.color}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      {/* Create Form */}
+      <Box bg="white" p="6" borderRadius="xl" shadow="sm" mb="8">
+        <Heading size="md" mb="4">Nova Categoria</Heading>
+        <form onSubmit={handleCreate}>
+          <Flex gap="4" align="flex-end" wrap="wrap">
+            <FormControl flex={1} minW="200px">
+              <FormLabel>Nome</FormLabel>
+              <Input
+                required
+                placeholder="Ex: Alimentação"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+            </FormControl>
+            <FormControl w="150px">
+              <FormLabel>Tipo</FormLabel>
+              <Select
+                value={newType}
+                onChange={(e) => setNewType(e.target.value as any)}
+              >
+                <option value="INCOME">Receita</option>
+                <option value="EXPENSE">Despesa</option>
+              </Select>
+            </FormControl>
+            <FormControl w="150px">
+              <FormLabel>Cor (Opcional)</FormLabel>
+              <Input
+                placeholder="#000000"
+                value={newColor}
+                onChange={(e) => setNewColor(e.target.value)}
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              colorScheme="brand"
+              leftIcon={<Plus size={18} />}
+              isLoading={loading}
+            >
+              Adicionar
+            </Button>
+          </Flex>
+        </form>
+      </Box>
+
+      {/* List Table */}
+      <Box bg="white" borderRadius="xl" shadow="sm" overflow="hidden">
+        <TableContainer>
+          <Table variant="simple">
+            <Thead bg="gray.50">
+              <Tr>
+                <Th>Nome</Th>
+                <Th>Tipo</Th>
+                <Th>Cor</Th>
+                <Th textAlign="center">Ações</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {items.map((c) => (
+                <Tr key={c.id}>
+                  <Td fontWeight="medium">{c.name}</Td>
+                  <Td>
+                    <Badge colorScheme={c.type === 'INCOME' ? 'green' : 'red'}>
+                      {c.type === 'INCOME' ? 'Receita' : 'Despesa'}
+                    </Badge>
+                  </Td>
+                  <Td>
+                    {c.color && (
+                      <Flex align="center" gap="2">
+                        <Box w="4" h="4" borderRadius="full" bg={c.color} border="1px solid #e2e8f0" />
+                        <Box as="span" fontSize="sm" color="gray.500">{c.color}</Box>
+                      </Flex>
+                    )}
+                  </Td>
+                  <Td textAlign="center">
+                    <HStack justify="center" spacing={2}>
+                      <IconButton
+                        aria-label="Editar"
+                        icon={<Edit2 size={16} />}
+                        size="sm"
+                        variant="ghost"
+                        colorScheme="blue"
+                        onClick={() => openEditModal(c)}
+                      />
+                      <IconButton
+                        aria-label="Excluir"
+                        icon={<Trash2 size={16} />}
+                        size="sm"
+                        variant="ghost"
+                        colorScheme="red"
+                        onClick={() => handleDelete(c.id)}
+                      />
+                    </HStack>
+                  </Td>
+                </Tr>
+              ))}
+              {items.length === 0 && (
+                <Tr>
+                  <Td colSpan={4} textAlign="center" py={8} color="gray.500">
+                    Nenhuma categoria cadastrada.
+                  </Td>
+                </Tr>
+              )}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+
+      {/* Edit Modal */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Editar Categoria</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {editingItem && (
+              <Flex direction="column" gap="4">
+                <FormControl>
+                  <FormLabel>Nome</FormLabel>
+                  <Input
+                    value={editingItem.name}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, name: e.target.value })
+                    }
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Tipo</FormLabel>
+                  <Select
+                    value={editingItem.type}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        type: e.target.value as 'INCOME' | 'EXPENSE',
+                      })
+                    }
+                  >
+                    <option value="INCOME">Receita</option>
+                    <option value="EXPENSE">Despesa</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Cor</FormLabel>
+                  <Input
+                    value={editingItem.color || ''}
+                    onChange={(e) =>
+                      setEditingItem({ ...editingItem, color: e.target.value })
+                    }
+                  />
+                </FormControl>
+              </Flex>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button colorScheme="brand" onClick={handleUpdate} leftIcon={<Check size={18} />}>
+              Salvar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Box>
   );
 }
-

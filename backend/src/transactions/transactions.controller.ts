@@ -9,23 +9,26 @@ import {
   Put,
   Query,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
-import type { CurrentUserData } from '../common/decorators/current-user.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
+import { Permission } from '../auth/permissions';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { TransactionType } from '@prisma/client';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(private readonly transactionsService: TransactionsService) { }
 
   @Get()
+  @RequirePermissions(Permission.TRANSACTION_VIEW)
   findAll(
-    @CurrentUser() user: CurrentUserData,
+    @Request() req,
     @Query('from') from?: string,
     @Query('to') to?: string,
     @Query('type') type?: TransactionType,
@@ -33,7 +36,7 @@ export class TransactionsController {
     @Query('paymentMethodId') paymentMethodId?: string,
   ) {
     return this.transactionsService.findAll({
-      companyId: user.userId,
+      companyId: req.user.companyId,
       from,
       to,
       type,
@@ -43,28 +46,31 @@ export class TransactionsController {
   }
 
   @Post()
+  @RequirePermissions(Permission.TRANSACTION_CREATE)
   create(
-    @CurrentUser() user: CurrentUserData,
+    @Request() req,
     @Body() dto: CreateTransactionDto,
   ) {
-    return this.transactionsService.create(user.userId, user.userId, dto);
+    return this.transactionsService.create(req.user.companyId, req.user.userId, dto);
   }
 
   @Put(':id')
+  @RequirePermissions(Permission.TRANSACTION_EDIT)
   update(
-    @CurrentUser() user: CurrentUserData,
+    @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(user.userId, id, dto);
+    return this.transactionsService.update(req.user.companyId, id, dto);
   }
 
   @Delete(':id')
+  @RequirePermissions(Permission.TRANSACTION_DELETE)
   remove(
-    @CurrentUser() user: CurrentUserData,
+    @Request() req,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.transactionsService.remove(user.userId, id);
+    return this.transactionsService.remove(req.user.companyId, id);
   }
 }
 

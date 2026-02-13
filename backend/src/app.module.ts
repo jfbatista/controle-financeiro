@@ -11,6 +11,7 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
 import { RecurringBillsModule } from './recurring-bills/recurring-bills.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RecurringBillsModule } from './recurring-bills/recurring-bills.module';
     TransactionsModule,
     ReportsModule,
     RecurringBillsModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

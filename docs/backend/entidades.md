@@ -91,3 +91,22 @@ Campos:
 - `createdAt`
 - `updatedAt`
 
+### Group
+
+Grupo de usuários para controle de acesso (RBAC).
+
+Campos:
+- `id`
+- `companyId` (FK para `Company`)
+- `name` (ex.: "Admin", "Financeiro")
+- `createdAt`
+- `updatedAt`
+
+### GroupPermission
+
+Permissão específica atribuída a um grupo.
+
+Campos:
+- `id`
+- `groupId` (FK para `Group`)
+- `permission` (Enum string, ex.: "TRANSACTION_CREATE")

@@ -1,11 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { httpPost } from '../services/http';
+import { Permission } from '../config/permissions';
+import type { Role } from '../config/permissions';
 
 interface User {
   id: number;
   name: string;
   email: string;
+  role?: string;
+  permissions?: string[];
 }
 
 interface AuthResponse {
@@ -23,11 +27,12 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  can: (permission: Permission) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
@@ -68,6 +73,12 @@ export const useAuthStore = create<AuthState>()(
 
       clearError() {
         set({ error: null });
+      },
+
+      can(permission: Permission) {
+        const { user } = get();
+        if (!user || !user.permissions) return false;
+        return user.permissions.includes(permission);
       },
     }),
     {

@@ -4,6 +4,8 @@ import { FirstUserPage } from './pages/FirstUserPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
+import { ManageUsersPage } from './pages/ManageUsersPage';
+import { ManageGroupsPage } from './pages/ManageGroupsPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RecurringBillsPage } from './pages/RecurringBillsPage';
 import { MainLayout } from './components/layout/MainLayout';
@@ -72,10 +74,39 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/settings/users"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ManageUsersPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ManageUsersPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings/groups"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ManageGroupsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
 
 export default App;
-

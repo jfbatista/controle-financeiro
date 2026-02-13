@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
+import { useCustomToast } from '../hooks/useCustomToast';
 import {
   Box,
   Button,
@@ -13,7 +14,6 @@ import {
   Text,
   Link,
   VStack,
-  useToast,
   Container,
 } from '@chakra-ui/react';
 
@@ -22,7 +22,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { login, loading, clearError } = useAuthStore();
-  const toast = useToast();
+  const toast = useCustomToast();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,13 +30,7 @@ export function LoginPage() {
     await login(email, password);
     const currentError = useAuthStore.getState().error;
     if (currentError) {
-      toast({
-        title: 'Erro ao entrar',
-        description: currentError,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Erro ao entrar', currentError);
       return;
     }
     navigate('/dashboard');
