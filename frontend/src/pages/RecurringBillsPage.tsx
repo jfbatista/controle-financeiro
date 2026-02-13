@@ -158,7 +158,7 @@ export function RecurringBillsPage() {
                         </Flex>
 
                         <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-                            <FormControl>
+                            <FormControl flex={1}>
                                 <FormLabel>Categoria</FormLabel>
                                 <Select
                                     value={categoryId}
@@ -171,16 +171,16 @@ export function RecurringBillsPage() {
                                     ))}
                                 </Select>
                             </FormControl>
-
-                            <FormControl flex={2}>
-                                <FormLabel>Descrição</FormLabel>
-                                <Input
-                                    placeholder="Ex: Aluguel Loja"
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                />
-                            </FormControl>
                         </Flex>
+
+                        <FormControl>
+                            <FormLabel>Descrição</FormLabel>
+                            <Input
+                                placeholder="Ex: Aluguel Loja Centro, Conta de Luz, Internet Fibra, etc."
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </FormControl>
 
                         <Button type="submit" leftIcon={<Plus size={18} />} colorScheme="brand" alignSelf="flex-end">
                             Salvar
@@ -190,7 +190,7 @@ export function RecurringBillsPage() {
             </Box>
 
             {/* Table */}
-            <Box bg="white" borderRadius="xl" shadow="sm" overflow="hidden">
+            < Box bg="white" borderRadius="xl" shadow="sm" overflow="hidden" >
                 <TableContainer>
                     <Table variant="simple">
                         <Thead bg="gray.50">
@@ -239,7 +239,7 @@ export function RecurringBillsPage() {
                         </Tbody>
                     </Table>
                 </TableContainer>
-            </Box>
-        </Box>
+            </Box >
+        </Box >
     );
 }

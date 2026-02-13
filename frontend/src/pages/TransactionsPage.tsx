@@ -245,7 +245,7 @@ export function TransactionsPage() {
             </Flex>
 
             <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-              <FormControl>
+              <FormControl flex={1}>
                 <FormLabel>Categoria</FormLabel>
                 <Select
                   value={categoryId}
@@ -259,7 +259,7 @@ export function TransactionsPage() {
                 </Select>
               </FormControl>
 
-              <FormControl>
+              <FormControl flex={1}>
                 <FormLabel>Forma de Pagamento</FormLabel>
                 <Select
                   value={paymentMethodId}
@@ -272,16 +272,16 @@ export function TransactionsPage() {
                   ))}
                 </Select>
               </FormControl>
-
-              <FormControl flex={2}>
-                <FormLabel>Descrição</FormLabel>
-                <Input
-                  placeholder="Descrição opcional"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </FormControl>
             </Flex>
+
+            <FormControl>
+              <FormLabel>Descrição</FormLabel>
+              <Input
+                placeholder="Ex: Compra de mercadorias, Pagamento fornecedor, Venda produto X, etc."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </FormControl>
 
             <Button type="submit" leftIcon={<Plus size={18} />} colorScheme="brand" alignSelf="flex-end">
               Adicionar
