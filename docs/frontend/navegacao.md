@@ -4,21 +4,16 @@
 
 - `/login`
   - Tela de autenticação.
-- `/`
-  - Redireciona para `/dashboard` quando logado.
+- `/first-access`
+  - Tela de criação do primeiro usuário + empresa.
 - `/dashboard`
-  - Visão geral com cards e gráficos.
-- `/lancamentos`
-  - Lista e filtro de lançamentos.
-- `/lancamentos/novo`
-  - Formulário para novo lançamento.
-- `/contas-fixas`
-  - Cadastro de contas recorrentes.
-- `/configuracoes`
-  - Sub-seções:
-    - `/configuracoes/empresa`
-    - `/configuracoes/categorias`
-    - `/configuracoes/formas-pagamento`
+  - Visão geral com cards de entradas, saídas e resultado.
+- `/transactions`
+  - Lista, filtro e criação de lançamentos.
+- `/categories`
+  - Cadastro e listagem de categorias (receitas e despesas).
+- `/payment-methods`
+  - Cadastro e listagem de formas de pagamento.
 
 ### Padrões de UI
 
@@ -33,10 +28,10 @@
 ### Fluxos Principais
 
 - **Primeiro acesso**
-  - Usuário loga.
-  - Sistema pede confirmação/cadastro da empresa e categorias iniciais.
+  - Usuário acessa `/first-access` e cria o primeiro usuário e empresa.
+  - Em seguida, faz login em `/login`.
 - **Uso diário**
-  - Acessa `/lancamentos`.
-  - Lança entradas/saídas do dia.
-  - Volta ao `/dashboard` para ver situação do caixa.
+  - Faz login em `/login`.
+  - Acessa `/transactions` para lançar entradas/saídas do dia.
+  - Consulta `/dashboard` para ver situação do caixa (entradas, saídas, resultado).
 
