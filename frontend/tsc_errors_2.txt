@@ -1,0 +1,3 @@
+src/components/layout/MainLayout.tsx(1,10): error TS1484: 'ReactNode' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/RecurringBillsPage.tsx(23,5): error TS6133: 'HStack' is declared but its value is never read.
+src/pages/TransactionsPage.tsx(18,3): error TS6133: 'HStack' is declared but its value is never read.

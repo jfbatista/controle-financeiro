@@ -19,6 +19,7 @@ const categories_module_1 = require("./categories/categories.module");
 const payment_methods_module_1 = require("./payment-methods/payment-methods.module");
 const transactions_module_1 = require("./transactions/transactions.module");
 const reports_module_1 = require("./reports/reports.module");
+const recurring_bills_module_1 = require("./recurring-bills/recurring-bills.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             payment_methods_module_1.PaymentMethodsModule,
             transactions_module_1.TransactionsModule,
             reports_module_1.ReportsModule,
+            recurring_bills_module_1.RecurringBillsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

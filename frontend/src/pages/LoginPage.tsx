@@ -2,12 +2,27 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  FormControl,
+  FormLabel,
+  Text,
+  Link,
+  VStack,
+  useToast,
+  Container,
+} from '@chakra-ui/react';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { login, loading, clearError } = useAuthStore();
+  const toast = useToast();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -15,89 +30,69 @@ export function LoginPage() {
     await login(email, password);
     const currentError = useAuthStore.getState().error;
     if (currentError) {
-      alert(`Erro ao fazer login: ${currentError}`);
+      toast({
+        title: 'Erro ao entrar',
+        description: currentError,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
     navigate('/dashboard');
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-        backgroundColor: '#f3f4f6',
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          padding: '2rem',
-          borderRadius: '0.75rem',
-          boxShadow: '0 10px 25px rgba(15,23,42,0.1)',
-          width: '100%',
-          maxWidth: '420px',
-        }}
-      >
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>
-          Entrar no Controle Financeiro
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <label style={{ fontSize: '0.85rem' }}>
-              E-mail
-              <input
-                required
+    <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+      <Container maxW="md" py={12} px={4}>
+        <Box bg="white" p={8} borderRadius="xl" boxShadow="lg">
+          <VStack spacing={6} as="form" onSubmit={handleSubmit}>
+            <Heading size="lg" textAlign="center" color="brand.600">
+              Controle Financeiro
+            </Heading>
+            <Text fontSize="md" color="gray.600" textAlign="center">
+              Acesse sua conta para continuar
+            </Text>
+
+            <FormControl isRequired>
+              <FormLabel>E-mail</FormLabel>
+              <Input
                 type="email"
-                style={{ width: '100%', marginTop: 4, padding: '0.5rem' }}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
               />
-            </label>
-            <label style={{ fontSize: '0.85rem' }}>
-              Senha
-              <input
-                required
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Senha</FormLabel>
+              <Input
                 type="password"
-                style={{ width: '100%', marginTop: 4, padding: '0.5rem' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="********"
               />
-            </label>
-            <button
+            </FormControl>
+
+            <Button
               type="submit"
-              disabled={loading}
-              style={{
-                marginTop: '0.75rem',
-                width: '100%',
-                padding: '0.6rem',
-                backgroundColor: '#6d28d9',
-                color: 'white',
-                borderRadius: '0.5rem',
-                border: 'none',
-                cursor: loading ? 'default' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                fontWeight: 600,
-              }}
+              colorScheme="brand"
+              width="full"
+              isLoading={loading}
+              loadingText="Entrando..."
             >
-              {loading ? 'Entrando...' : 'Entrar'}
-            </button>
-            <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+              Entrar
+            </Button>
+
+            <Text fontSize="sm" color="gray.600">
               Primeiro uso?{' '}
-              <a
-                href="/first-access"
-                style={{ color: '#6d28d9', textDecoration: 'underline' }}
-              >
+              <Link href="/first-access" color="brand.500" fontWeight="bold">
                 Criar usuário inicial
-              </a>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
+              </Link>
+            </Text>
+          </VStack>
+        </Box>
+      </Container>
+    </Flex>
   );
 }
-

@@ -1,10 +1,11 @@
-import { Navigate, Route, Routes, Link } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { FirstUserPage } from './pages/FirstUserPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
 import { TransactionsPage } from './pages/TransactionsPage';
+import { RecurringBillsPage } from './pages/RecurringBillsPage';
 import { MainLayout } from './components/layout/MainLayout';
 import { useAuthStore } from './store/auth';
 
@@ -26,7 +27,6 @@ function App() {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <NavTabs />
               <DashboardPage />
             </MainLayout>
           </ProtectedRoute>
@@ -37,7 +37,6 @@ function App() {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <NavTabs />
               <CategoriesPage />
             </MainLayout>
           </ProtectedRoute>
@@ -48,7 +47,6 @@ function App() {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <NavTabs />
               <PaymentMethodsPage />
             </MainLayout>
           </ProtectedRoute>
@@ -59,46 +57,23 @@ function App() {
         element={
           <ProtectedRoute>
             <MainLayout>
-              <NavTabs />
               <TransactionsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recurring-bills"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <RecurringBillsPage />
             </MainLayout>
           </ProtectedRoute>
         }
       />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-  );
-}
-
-function NavTabs() {
-  const style: React.CSSProperties = {
-    display: 'flex',
-    gap: '0.75rem',
-    marginBottom: '1rem',
-    fontSize: '0.85rem',
-  };
-  const linkStyle: React.CSSProperties = {
-    padding: '0.35rem 0.7rem',
-    borderRadius: 999,
-    border: '1px solid #e5e7eb',
-    textDecoration: 'none',
-    color: '#374151',
-  };
-  return (
-    <nav style={style}>
-      <Link to="/dashboard" style={linkStyle}>
-        Dashboard
-      </Link>
-      <Link to="/transactions" style={linkStyle}>
-        Lançamentos
-      </Link>
-      <Link to="/categories" style={linkStyle}>
-        Categorias
-      </Link>
-      <Link to="/payment-methods" style={linkStyle}>
-        Formas de pag.
-      </Link>
-    </nav>
   );
 }
 

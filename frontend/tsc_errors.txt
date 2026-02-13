@@ -1,0 +1,121 @@
+src/components/layout/MainLayout.tsx(1,10): error TS1484: 'ReactNode' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/layout/MainLayout.tsx(12,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'MenuButton'.
+src/components/layout/MainLayout.tsx(13,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'MenuList'.
+src/components/layout/MainLayout.tsx(16,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'useColorModeValue'.
+src/components/layout/MainLayout.tsx(47,11): error TS2339: Property 'isOpen' does not exist on type '{ open: boolean; onOpen: () => void; onClose: () => void; onToggle: () => void; setOpen: Dispatch<SetStateAction<boolean>>; }'.
+src/components/layout/MainLayout.tsx(55,8): error TS2604: JSX element type 'Drawer' does not have any construct or call signatures.
+src/components/layout/MainLayout.tsx(55,8): error TS2786: 'Drawer' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/drawer/namespace")' is not a valid JSX element type.
+src/components/layout/MainLayout.tsx(97,17): error TS2322: Type '{ children: Element[]; spacing: number; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+src/components/layout/MainLayout.tsx(108,11): error TS2322: Type '{ display: { base: "flex"; md: "none"; }; onClick: () => void; variant: "outline"; "aria-label": string; icon: Element; }' is not assignable to type 'IntrinsicAttributes & IconButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'icon' does not exist on type 'IntrinsicAttributes & IconButtonProps & RefAttributes<HTMLButtonElement>'. Did you mean '_icon'?
+src/components/layout/MainLayout.tsx(111,31): error TS2322: Type '{ children: Element[]; align: "stretch"; spacing: number; px: number; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+src/components/layout/MainLayout.tsx(118,15): error TS2322: Type '{ children: Element; key: string; as: ForwardRefExoticComponent<LinkProps & RefAttributes<HTMLAnchorElement>>; to: string; style: { ...; }; onClick: () => void; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'to' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+src/components/layout/MainLayout.tsx(175,9): error TS2322: Type '{ display: { base: "flex"; md: "none"; }; onClick: () => void; variant: "outline"; "aria-label": string; icon: Element; }' is not assignable to type 'IntrinsicAttributes & IconButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'icon' does not exist on type 'IntrinsicAttributes & IconButtonProps & RefAttributes<HTMLButtonElement>'. Did you mean '_icon'?
+src/components/layout/MainLayout.tsx(186,15): error TS2322: Type '{ children: Element; spacing: { base: string; md: string; }; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+src/components/layout/MainLayout.tsx(188,12): error TS2604: JSX element type 'Menu' does not have any construct or call signatures.
+src/components/layout/MainLayout.tsx(188,12): error TS2786: 'Menu' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/menu/namespace")' is not a valid JSX element type.
+src/components/layout/MainLayout.tsx(195,18): error TS2604: JSX element type 'Avatar' does not have any construct or call signatures.
+src/components/layout/MainLayout.tsx(195,18): error TS2786: 'Avatar' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/avatar/namespace")' is not a valid JSX element type.
+src/components/layout/MainLayout.tsx(204,19): error TS2322: Type '{ children: Element[]; display: { base: "none"; md: "flex"; }; alignItems: "flex-start"; spacing: string; ml: "2"; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+src/components/layout/MainLayout.tsx(218,25): error TS2322: Type '{ children: string; icon: Element; onClick: () => void; color: "red.500"; }' is not assignable to type 'IntrinsicAttributes & MenuItemProps & RefAttributes<HTMLDivElement>'.
+  Property 'icon' does not exist on type 'IntrinsicAttributes & MenuItemProps & RefAttributes<HTMLDivElement>'. Did you mean '_icon'?
+src/main.tsx(10,21): error TS2322: Type '{ children: Element; theme: any; }' is not assignable to type 'IntrinsicAttributes & ChakraProviderProps'.
+  Property 'theme' does not exist on type 'IntrinsicAttributes & ChakraProviderProps'.
+src/pages/DashboardPage.tsx(25,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'StatNumber'.
+src/pages/DashboardPage.tsx(77,50): error TS2322: Type '{ children: Element[]; columns: { base: number; md: number; }; spacing: number; mb: "8"; }' is not assignable to type 'IntrinsicAttributes & SimpleGridProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & SimpleGridProps & RefAttributes<HTMLDivElement>'.
+src/pages/DashboardPage.tsx(97,52): error TS2322: Type '{ children: Element[]; columns: { base: number; md: number; }; spacing: number; mb: "8"; }' is not assignable to type 'IntrinsicAttributes & SimpleGridProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & SimpleGridProps & RefAttributes<HTMLDivElement>'.
+src/pages/DashboardPage.tsx(98,14): error TS2604: JSX element type 'Card' does not have any construct or call signatures.
+src/pages/DashboardPage.tsx(98,14): error TS2786: 'Card' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/card/namespace")' is not a valid JSX element type.
+src/pages/DashboardPage.tsx(100,18): error TS2604: JSX element type 'Stat' does not have any construct or call signatures.
+src/pages/DashboardPage.tsx(100,18): error TS2786: 'Stat' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/stat/namespace")' is not a valid JSX element type.
+src/pages/DashboardPage.tsx(115,14): error TS2604: JSX element type 'Card' does not have any construct or call signatures.
+src/pages/DashboardPage.tsx(115,14): error TS2786: 'Card' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/card/namespace")' is not a valid JSX element type.
+src/pages/DashboardPage.tsx(117,18): error TS2604: JSX element type 'Stat' does not have any construct or call signatures.
+src/pages/DashboardPage.tsx(117,18): error TS2786: 'Stat' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/stat/namespace")' is not a valid JSX element type.
+src/pages/DashboardPage.tsx(132,14): error TS2604: JSX element type 'Card' does not have any construct or call signatures.
+src/pages/DashboardPage.tsx(132,14): error TS2786: 'Card' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/card/namespace")' is not a valid JSX element type.
+src/pages/DashboardPage.tsx(134,18): error TS2604: JSX element type 'Stat' does not have any construct or call signatures.
+src/pages/DashboardPage.tsx(134,18): error TS2786: 'Stat' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/stat/namespace")' is not a valid JSX element type.
+src/pages/DashboardPage.tsx(151,52): error TS2322: Type '{ children: Element[]; columns: { base: number; lg: number; }; spacing: number; }' is not assignable to type 'IntrinsicAttributes & SimpleGridProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & SimpleGridProps & RefAttributes<HTMLDivElement>'.
+src/pages/RecurringBillsPage.tsx(11,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Thead'.
+src/pages/RecurringBillsPage.tsx(12,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Tbody'.
+src/pages/RecurringBillsPage.tsx(13,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Tr'.
+src/pages/RecurringBillsPage.tsx(14,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Th'.
+src/pages/RecurringBillsPage.tsx(15,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Td'.
+src/pages/RecurringBillsPage.tsx(16,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'TableContainer'.
+src/pages/RecurringBillsPage.tsx(19,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'FormControl'.
+src/pages/RecurringBillsPage.tsx(20,5): error TS2305: Module '"@chakra-ui/react"' has no exported member 'FormLabel'.
+src/pages/RecurringBillsPage.tsx(21,5): error TS2724: '"@chakra-ui/react"' has no exported member named 'useToast'. Did you mean 'useTabs'?
+src/pages/RecurringBillsPage.tsx(23,5): error TS6133: 'HStack' is declared but its value is never read.
+src/pages/RecurringBillsPage.tsx(160,29): error TS2322: Type '{ children: Element[]; spacing: number; align: "stretch"; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+src/pages/RecurringBillsPage.tsx(164,34): error TS2604: JSX element type 'Select' does not have any construct or call signatures.
+src/pages/RecurringBillsPage.tsx(164,34): error TS2786: 'Select' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/select/namespace")' is not a valid JSX element type.
+src/pages/RecurringBillsPage.tsx(164,65): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/RecurringBillsPage.tsx(198,34): error TS2604: JSX element type 'Select' does not have any construct or call signatures.
+src/pages/RecurringBillsPage.tsx(198,34): error TS2786: 'Select' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/select/namespace")' is not a valid JSX element type.
+src/pages/RecurringBillsPage.tsx(200,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/RecurringBillsPage.tsx(220,47): error TS2322: Type '{ children: string; type: "submit"; leftIcon: Element; colorScheme: "brand"; alignSelf: "flex-end"; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'leftIcon' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/pages/RecurringBillsPage.tsx(230,22): error TS2604: JSX element type 'Table' does not have any construct or call signatures.
+src/pages/RecurringBillsPage.tsx(230,22): error TS2786: 'Table' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/table/namespace")' is not a valid JSX element type.
+src/pages/RecurringBillsPage.tsx(258,45): error TS2322: Type '{ "aria-label": string; icon: Element; colorScheme: "red"; variant: "ghost"; size: "sm"; onClick: () => Promise<void>; }' is not assignable to type 'IntrinsicAttributes & IconButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'icon' does not exist on type 'IntrinsicAttributes & IconButtonProps & RefAttributes<HTMLButtonElement>'. Did you mean '_icon'?
+src/pages/TransactionsPage.tsx(11,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Thead'.
+src/pages/TransactionsPage.tsx(12,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Tbody'.
+src/pages/TransactionsPage.tsx(13,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Tr'.
+src/pages/TransactionsPage.tsx(14,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Th'.
+src/pages/TransactionsPage.tsx(15,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'Td'.
+src/pages/TransactionsPage.tsx(16,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'TableContainer'.
+src/pages/TransactionsPage.tsx(18,3): error TS6133: 'HStack' is declared but its value is never read.
+src/pages/TransactionsPage.tsx(20,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'FormControl'.
+src/pages/TransactionsPage.tsx(21,3): error TS2305: Module '"@chakra-ui/react"' has no exported member 'FormLabel'.
+src/pages/TransactionsPage.tsx(22,3): error TS2724: '"@chakra-ui/react"' has no exported member named 'useToast'. Did you mean 'useTabs'?
+src/pages/TransactionsPage.tsx(158,19): error TS2322: Type '{ children: Element[]; spacing: number; align: "stretch"; }' is not assignable to type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+  Property 'spacing' does not exist on type 'IntrinsicAttributes & StackProps & RefAttributes<HTMLDivElement>'.
+src/pages/TransactionsPage.tsx(162,18): error TS2604: JSX element type 'Select' does not have any construct or call signatures.
+src/pages/TransactionsPage.tsx(162,18): error TS2786: 'Select' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/select/namespace")' is not a valid JSX element type.
+src/pages/TransactionsPage.tsx(162,49): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/TransactionsPage.tsx(189,18): error TS2604: JSX element type 'Select' does not have any construct or call signatures.
+src/pages/TransactionsPage.tsx(189,18): error TS2786: 'Select' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/select/namespace")' is not a valid JSX element type.
+src/pages/TransactionsPage.tsx(191,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/TransactionsPage.tsx(203,18): error TS2604: JSX element type 'Select' does not have any construct or call signatures.
+src/pages/TransactionsPage.tsx(203,18): error TS2786: 'Select' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/select/namespace")' is not a valid JSX element type.
+src/pages/TransactionsPage.tsx(205,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/TransactionsPage.tsx(225,35): error TS2322: Type '{ children: string; type: "submit"; leftIcon: Element; colorScheme: "brand"; alignSelf: "flex-end"; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'leftIcon' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/pages/TransactionsPage.tsx(257,14): error TS2604: JSX element type 'Select' does not have any construct or call signatures.
+src/pages/TransactionsPage.tsx(257,14): error TS2786: 'Select' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/select/namespace")' is not a valid JSX element type.
+src/pages/TransactionsPage.tsx(261,26): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/pages/TransactionsPage.tsx(268,56): error TS2322: Type '{ children: string; size: "sm"; onClick: () => Promise<void>; leftIcon: Element; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'leftIcon' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/pages/TransactionsPage.tsx(277,12): error TS2604: JSX element type 'Table' does not have any construct or call signatures.
+src/pages/TransactionsPage.tsx(277,12): error TS2786: 'Table' cannot be used as a JSX component.
+  Its type 'typeof import("D:/svn/Fluxo_caixa/frontend/node_modules/@chakra-ui/react/dist/types/components/table/namespace")' is not a valid JSX element type.
+src/theme.ts(1,10): error TS2305: Module '"@chakra-ui/react"' has no exported member 'extendTheme'.
+src/theme.ts(1,28): error TS2724: '"@chakra-ui/react"' has no exported member named 'ThemeConfig'. Did you mean 'ThemingConfig'?

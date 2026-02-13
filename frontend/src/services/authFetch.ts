@@ -1,5 +1,5 @@
 import { useAuthStore } from '../store/auth';
-import { httpGet, httpPost } from './http';
+import { httpDelete, httpGet, httpPost } from './http';
 
 export function useAuthApi() {
   const { accessToken } = useAuthStore.getState();
@@ -12,6 +12,7 @@ export function useAuthApi() {
     get: <T>(path: string) => httpGet<T>(path, withToken()),
     post: <TResp, TBody = unknown>(path: string, body: TBody) =>
       httpPost<TResp, TBody>(path, body, withToken()),
+    del: <T>(path: string) => httpDelete<T>(path, withToken()),
   };
 }
 

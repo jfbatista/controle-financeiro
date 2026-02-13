@@ -1,5 +1,18 @@
 import { useState } from 'react';
 import { httpPost } from '../services/http';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  FormControl,
+  FormLabel,
+  VStack,
+  useToast,
+  Container,
+} from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 interface FirstUserResponse {
   id: number;
@@ -17,6 +30,8 @@ export function FirstUserPage() {
   const [password, setPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,104 +43,86 @@ export function FirstUserPage() {
         password,
         companyName,
       });
-      alert('Usuário inicial criado com sucesso. Agora você já pode fazer login.');
+      toast({
+        title: 'Sucesso!',
+        description: 'Usuário inicial criado. Faça login para continuar.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate('/');
     } catch (error: any) {
-      alert(
-        `Erro ao criar usuário inicial: ${
-          error?.message || 'verifique os dados e tente novamente.'
-        }`,
-      );
+      toast({
+        title: 'Erro ao criar usuário',
+        description: error?.message || 'Verifique os dados e tente novamente.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-        backgroundColor: '#f3f4f6',
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          padding: '2rem',
-          borderRadius: '0.75rem',
-          boxShadow: '0 10px 25px rgba(15,23,42,0.1)',
-          width: '100%',
-          maxWidth: '480px',
-        }}
-      >
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>
-          Primeiro acesso
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <label style={{ fontSize: '0.85rem' }}>
-              Seu nome
-              <input
-                required
-                style={{ width: '100%', marginTop: 4, padding: '0.5rem' }}
+    <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+      <Container maxW="md" py={12} px={4}>
+        <Box bg="white" p={8} borderRadius="xl" boxShadow="lg">
+          <VStack spacing={6} as="form" onSubmit={handleSubmit}>
+            <Heading size="lg" textAlign="center" color="brand.600">
+              Primeiro Acesso
+            </Heading>
+
+            <FormControl isRequired>
+              <FormLabel>Seu Nome</FormLabel>
+              <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                placeholder="Nome completo"
               />
-            </label>
-            <label style={{ fontSize: '0.85rem' }}>
-              E-mail
-              <input
-                required
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>E-mail</FormLabel>
+              <Input
                 type="email"
-                style={{ width: '100%', marginTop: 4, padding: '0.5rem' }}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
               />
-            </label>
-            <label style={{ fontSize: '0.85rem' }}>
-              Senha
-              <input
-                required
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Senha</FormLabel>
+              <Input
                 type="password"
-                style={{ width: '100%', marginTop: 4, padding: '0.5rem' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="********"
               />
-            </label>
-            <label style={{ fontSize: '0.85rem' }}>
-              Nome da empresa
-              <input
-                style={{ width: '100%', marginTop: 4, padding: '0.5rem' }}
-                placeholder="Ex.: Online Tecnologia da Informação"
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Nome da Empresa</FormLabel>
+              <Input
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Ex: Minha Loja"
               />
-            </label>
-            <button
+            </FormControl>
+
+            <Button
               type="submit"
-              disabled={loading}
-              style={{
-                marginTop: '0.75rem',
-                width: '100%',
-                padding: '0.6rem',
-                backgroundColor: '#6d28d9',
-                color: 'white',
-                borderRadius: '0.5rem',
-                border: 'none',
-                cursor: loading ? 'default' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                fontWeight: 600,
-              }}
+              colorScheme="brand"
+              width="full"
+              isLoading={loading}
+              loadingText="Criando..."
             >
-              {loading ? 'Enviando...' : 'Criar usuário inicial'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              Criar usuário inicial
+            </Button>
+          </VStack>
+        </Box>
+      </Container>
+    </Flex>
   );
 }
-

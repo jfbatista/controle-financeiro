@@ -20,8 +20,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
     error.details = body;
     throw error;
   }
-  if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
+  if (response.status === 204) return undefined as any;
+  // safetly handle empty body
+  const text = await response.text();
+  return (text ? JSON.parse(text) : undefined) as any;
 }
 
 export async function httpPost<TResponse, TBody = unknown>(
@@ -60,3 +62,18 @@ export async function httpGet<TResponse>(
   return handleResponse<TResponse>(response);
 }
 
+export async function httpDelete<TResponse>(
+  path: string,
+  options?: { token?: string },
+): Promise<TResponse> {
+  const url = `${apiConfig.baseUrl}${path}`;
+  const headers: HeadersInit = {};
+  if (options?.token) {
+    headers.Authorization = `Bearer ${options.token}`;
+  }
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers,
+  });
+  return handleResponse<TResponse>(response);
+}

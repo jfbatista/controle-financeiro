@@ -10,6 +10,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
+import { RecurringBillsModule } from './recurring-bills/recurring-bills.module';
 
 @Module({
   imports: [
@@ -24,8 +25,9 @@ import { ReportsModule } from './reports/reports.module';
     PaymentMethodsModule,
     TransactionsModule,
     ReportsModule,
+    RecurringBillsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

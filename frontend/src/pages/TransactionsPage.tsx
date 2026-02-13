@@ -1,5 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useAuthApi } from '../services/authFetch';
+import {
+  Box,
+  Heading,
+  Flex,
+  Input,
+  Select,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  Badge,
+  VStack,
+  FormControl,
+  FormLabel,
+  useToast,
+} from '@chakra-ui/react';
+import { Plus, Filter } from 'lucide-react';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
 
@@ -26,6 +47,7 @@ interface Transaction {
 
 export function TransactionsPage() {
   const api = useAuthApi();
+  const toast = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
@@ -50,7 +72,13 @@ export function TransactionsPage() {
       setCategories(cats);
       setMethods(pms);
     } catch (e: any) {
-      alert(`Erro ao carregar categorias/formas de pagamento: ${e?.message || ''}`);
+      toast({
+        title: 'Erro ao carregar dados.',
+        description: e?.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
 
@@ -66,7 +94,13 @@ export function TransactionsPage() {
       );
       setTransactions(data);
     } catch (e: any) {
-      alert(`Erro ao carregar lançamentos: ${e?.message || ''}`);
+      toast({
+        title: 'Erro ao carregar lançamentos.',
+        description: e?.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
 
@@ -88,9 +122,22 @@ export function TransactionsPage() {
       });
       setAmount('');
       setDescription('');
+      // Keep date and type as is for convenience
       await loadTransactions();
+      toast({
+        title: 'Lançamento criado!',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
     } catch (e: any) {
-      alert(`Erro ao criar lançamento: ${e?.message || ''}`);
+      toast({
+        title: 'Erro ao criar lançamento.',
+        description: e?.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
 
@@ -100,199 +147,171 @@ export function TransactionsPage() {
     type === 'INCOME' ? incomeCategories : expenseCategories;
 
   return (
-    <div>
-      <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>
-        Lançamentos
-      </h2>
+    <Box>
+      <Heading size="lg" mb="6">Lançamentos</Heading>
 
-      <form
-        onSubmit={handleCreate}
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-          marginBottom: '1rem',
-        }}
-      >
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as TransactionType)}
-          style={{ padding: '0.4rem' }}
-        >
-          <option value="INCOME">Entrada</option>
-          <option value="EXPENSE">Saída</option>
-        </select>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          style={{ padding: '0.4rem' }}
-        />
-        <input
-          required
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="Valor"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          style={{ padding: '0.4rem', width: 100 }}
-        />
-        <select
-          required
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-          style={{ padding: '0.4rem', minWidth: 160 }}
-        >
-          <option value="">Categoria</option>
-          {visibleCategories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <select
-          required
-          value={paymentMethodId}
-          onChange={(e) => setPaymentMethodId(e.target.value)}
-          style={{ padding: '0.4rem', minWidth: 160 }}
-        >
-          <option value="">Forma de pag.</option>
-          {methods.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
-        <input
-          placeholder="Descrição"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          style={{ padding: '0.4rem', minWidth: 160, flex: 1 }}
-        />
-        <button
-          type="submit"
-          style={{
-            padding: '0.4rem 0.8rem',
-            backgroundColor: '#6d28d9',
-            color: 'white',
-            border: 'none',
-            borderRadius: 4,
-            cursor: 'pointer',
-          }}
-        >
-          Adicionar
-        </button>
-      </form>
+      {/* New Transaction Form */}
+      <Box bg="white" p="6" borderRadius="xl" shadow="sm" mb="8">
+        <Heading size="md" mb="4">Novo Lançamento</Heading>
+        <form onSubmit={handleCreate}>
+          <VStack spacing={4} align="stretch">
+            <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
+              <FormControl>
+                <FormLabel>Tipo</FormLabel>
+                <Select value={type} onChange={(e) => setType(e.target.value as TransactionType)}>
+                  <option value="INCOME">Entrada</option>
+                  <option value="EXPENSE">Saída</option>
+                </Select>
+              </FormControl>
 
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-          marginBottom: '0.75rem',
-          fontSize: '0.8rem',
-        }}
-      >
-        <span>Filtros:</span>
-        <input
-          type="date"
-          value={filterFrom}
-          onChange={(e) => setFilterFrom(e.target.value)}
-        />
-        <input
-          type="date"
-          value={filterTo}
-          onChange={(e) => setFilterTo(e.target.value)}
-        />
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value as any)}
-        >
-          <option value="ALL">Todos</option>
-          <option value="INCOME">Entradas</option>
-          <option value="EXPENSE">Saídas</option>
-        </select>
-        <button
-          type="button"
-          onClick={loadTransactions}
-          style={{
-            padding: '0.3rem 0.7rem',
-            borderRadius: 4,
-            border: '1px solid #d1d5db',
-            backgroundColor: '#f9fafb',
-            cursor: 'pointer',
-          }}
-        >
-          Aplicar
-        </button>
-      </div>
+              <FormControl>
+                <FormLabel>Data</FormLabel>
+                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              </FormControl>
 
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: '0.8rem',
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Data
-            </th>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Tipo
-            </th>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Categoria
-            </th>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Forma de pag.
-            </th>
-            <th style={{ textAlign: 'right', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Valor
-            </th>
-            <th style={{ textAlign: 'left', padding: 6, borderBottom: '1px solid #e5e7eb' }}>
-              Descrição
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((t) => (
-            <tr key={t.id}>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>
-                {new Date(t.date).toLocaleDateString('pt-BR')}
-              </td>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>
-                {t.type === 'INCOME' ? 'Entrada' : 'Saída'}
-              </td>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>
-                {t.category?.name}
-              </td>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>
-                {t.paymentMethod?.name}
-              </td>
-              <td
-                style={{
-                  padding: 6,
-                  borderBottom: '1px solid #f3f4f6',
-                  textAlign: 'right',
-                  color: t.type === 'INCOME' ? '#15803d' : '#b91c1c',
-                }}
-              >
-                {t.amount.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
-              </td>
-              <td style={{ padding: 6, borderBottom: '1px solid #f3f4f6' }}>
-                {t.description}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              <FormControl>
+                <FormLabel>Valor</FormLabel>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                />
+              </FormControl>
+            </Flex>
+
+            <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
+              <FormControl>
+                <FormLabel>Categoria</FormLabel>
+                <Select
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  placeholder="Selecione"
+                  required
+                >
+                  {visibleCategories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Forma de Pagamento</FormLabel>
+                <Select
+                  value={paymentMethodId}
+                  onChange={(e) => setPaymentMethodId(e.target.value)}
+                  placeholder="Selecione"
+                  required
+                >
+                  {methods.map((m) => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl flex={2}>
+                <FormLabel>Descrição</FormLabel>
+                <Input
+                  placeholder="Descrição opcional"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </FormControl>
+            </Flex>
+
+            <Button type="submit" leftIcon={<Plus size={18} />} colorScheme="brand" alignSelf="flex-end">
+              Adicionar
+            </Button>
+          </VStack>
+        </form>
+      </Box>
+
+      {/* Filters */}
+      <Box mb="6" bg="gray.50" p="4" borderRadius="lg">
+        <Flex gap="4" align="flex-end" wrap="wrap">
+          <Box>
+            <FormLabel fontSize="sm">De</FormLabel>
+            <Input
+              type="date"
+              bg="white"
+              size="sm"
+              value={filterFrom}
+              onChange={(e) => setFilterFrom(e.target.value)}
+            />
+          </Box>
+          <Box>
+            <FormLabel fontSize="sm">Até</FormLabel>
+            <Input
+              type="date"
+              bg="white"
+              size="sm"
+              value={filterTo}
+              onChange={(e) => setFilterTo(e.target.value)}
+            />
+          </Box>
+          <Box minW="150px">
+            <FormLabel fontSize="sm">Tipo</FormLabel>
+            <Select
+              bg="white"
+              size="sm"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value as any)}
+            >
+              <option value="ALL">Todos</option>
+              <option value="INCOME">Entradas</option>
+              <option value="EXPENSE">Saídas</option>
+            </Select>
+          </Box>
+          <Button size="sm" onClick={loadTransactions} leftIcon={<Filter size={14} />}>
+            Filtrar
+          </Button>
+        </Flex>
+      </Box>
+
+      {/* Transactions Table */}
+      <Box bg="white" borderRadius="xl" shadow="sm" overflow="hidden">
+        <TableContainer>
+          <Table variant="simple">
+            <Thead bg="gray.50">
+              <Tr>
+                <Th>Data</Th>
+                <Th>Tipo</Th>
+                <Th>Categoria</Th>
+                <Th>Forma Pag.</Th>
+                <Th isNumeric>Valor</Th>
+                <Th>Descrição</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {transactions.map((t) => (
+                <Tr key={t.id} _hover={{ bg: 'gray.50' }}>
+                  <Td>{new Date(t.date).toLocaleDateString('pt-BR')}</Td>
+                  <Td>
+                    <Badge colorScheme={t.type === 'INCOME' ? 'green' : 'red'}>
+                      {t.type === 'INCOME' ? 'Entrada' : 'Saída'}
+                    </Badge>
+                  </Td>
+                  <Td>{t.category?.name}</Td>
+                  <Td>{t.paymentMethod?.name}</Td>
+                  <Td isNumeric fontWeight="bold" color={t.type === 'INCOME' ? 'green.600' : 'red.600'}>
+                    {t.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </Td>
+                  <Td color="gray.600" fontSize="sm">{t.description}</Td>
+                </Tr>
+              ))}
+              {transactions.length === 0 && (
+                <Tr>
+                  <Td colSpan={6} textAlign="center" py="8" color="gray.500">
+                    Nenhum lançamento encontrado.
+                  </Td>
+                </Tr>
+              )}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Box>
   );
 }
-
