@@ -6,7 +6,12 @@ export declare class ReportsService {
         totalIncomes: number;
         totalExpenses: number;
         netResult: number;
-        expensesByCategory: any;
+        expensesByCategory: {
+            categoryId: number;
+            categoryName: string;
+            color: string | null | undefined;
+            total: number;
+        }[];
         history: {
             income: number;
             expense: number;

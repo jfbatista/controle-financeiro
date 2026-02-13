@@ -5,8 +5,44 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export declare class CategoriesController {
     private readonly categoriesService;
     constructor(categoriesService: CategoriesService);
-    findAll(user: CurrentUserData): Promise<any>;
-    create(user: CurrentUserData, dto: CreateCategoryDto): Promise<any>;
-    update(user: CurrentUserData, id: number, dto: UpdateCategoryDto): Promise<any>;
-    remove(user: CurrentUserData, id: number): Promise<any>;
+    findAll(user: CurrentUserData): Promise<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.CategoryType;
+        color: string | null;
+    }[]>;
+    create(user: CurrentUserData, dto: CreateCategoryDto): Promise<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.CategoryType;
+        color: string | null;
+    }>;
+    update(user: CurrentUserData, id: number, dto: UpdateCategoryDto): Promise<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.CategoryType;
+        color: string | null;
+    }>;
+    remove(user: CurrentUserData, id: number): Promise<{
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.CategoryType;
+        color: string | null;
+    }>;
 }

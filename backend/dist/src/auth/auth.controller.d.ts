@@ -7,10 +7,10 @@ export declare class AuthController {
         accessToken: string;
         refreshToken: string;
         user: {
-            id: any;
-            name: any;
-            email: any;
-            companyId: number | undefined;
+            id: number;
+            name: string;
+            email: string;
+            companyId: number;
             permissions: string[];
         };
     }>;

@@ -15,15 +15,48 @@ export declare class AuthService {
     private readonly configService;
     private readonly groupsService;
     constructor(prisma: PrismaService, jwtService: JwtService, configService: ConfigService, groupsService: GroupsService);
-    validateUser(email: string, password: string): Promise<any>;
+    validateUser(email: string, password: string): Promise<{
+        memberships: ({
+            company: {
+                id: number;
+                name: string;
+                document: string | null;
+                contactEmail: string | null;
+                ownerUserId: number;
+                createdAt: Date;
+                updatedAt: Date;
+                smtpHost: string | null;
+                smtpPort: number | null;
+                smtpUser: string | null;
+                smtpPass: string | null;
+                smtpSecure: boolean;
+                smtpFrom: string | null;
+            };
+        } & {
+            createdAt: Date;
+            updatedAt: Date;
+            userId: number;
+            companyId: number;
+            role: import("@prisma/client").$Enums.Role;
+            groupId: number | null;
+        })[];
+    } & {
+        id: number;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string;
+        passwordHash: string;
+        isActive: boolean;
+    }>;
     login(dto: LoginDto): Promise<{
         accessToken: string;
         refreshToken: string;
         user: {
-            id: any;
-            name: any;
-            email: any;
-            companyId: number | undefined;
+            id: number;
+            name: string;
+            email: string;
+            companyId: number;
             permissions: string[];
         };
     }>;

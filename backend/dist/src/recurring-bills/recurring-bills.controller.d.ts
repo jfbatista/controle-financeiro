@@ -4,9 +4,86 @@ import { UpdateRecurringBillDto } from './dto/update-recurring-bill.dto';
 export declare class RecurringBillsController {
     private readonly service;
     constructor(service: RecurringBillsService);
-    create(user: any, dto: CreateRecurringBillDto): Promise<any>;
-    findAll(user: any): Promise<any>;
-    findOne(user: any, id: number): Promise<any>;
-    update(user: any, id: number, dto: UpdateRecurringBillDto): Promise<any>;
-    remove(user: any, id: number): Promise<any>;
+    create(user: any, dto: CreateRecurringBillDto): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.TransactionType;
+        categoryId: number;
+        description: string | null;
+        amountExpected: import("@prisma/client/runtime/library").Decimal;
+        dueDay: number;
+    }>;
+    findAll(user: any): Promise<({
+        category: {
+            id: number;
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            companyId: number;
+            isActive: boolean;
+            type: import("@prisma/client").$Enums.CategoryType;
+            color: string | null;
+        };
+    } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.TransactionType;
+        categoryId: number;
+        description: string | null;
+        amountExpected: import("@prisma/client/runtime/library").Decimal;
+        dueDay: number;
+    })[]>;
+    findOne(user: any, id: number): Promise<{
+        category: {
+            id: number;
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+            companyId: number;
+            isActive: boolean;
+            type: import("@prisma/client").$Enums.CategoryType;
+            color: string | null;
+        };
+    } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.TransactionType;
+        categoryId: number;
+        description: string | null;
+        amountExpected: import("@prisma/client/runtime/library").Decimal;
+        dueDay: number;
+    }>;
+    update(user: any, id: number, dto: UpdateRecurringBillDto): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.TransactionType;
+        categoryId: number;
+        description: string | null;
+        amountExpected: import("@prisma/client/runtime/library").Decimal;
+        dueDay: number;
+    }>;
+    remove(user: any, id: number): Promise<{
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        companyId: number;
+        isActive: boolean;
+        type: import("@prisma/client").$Enums.TransactionType;
+        categoryId: number;
+        description: string | null;
+        amountExpected: import("@prisma/client/runtime/library").Decimal;
+        dueDay: number;
+    }>;
 }
