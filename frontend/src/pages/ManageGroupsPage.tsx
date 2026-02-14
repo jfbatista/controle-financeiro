@@ -224,7 +224,7 @@ export function ManageGroupsPage() {
                 )}
             </HStack>
 
-            <Box bg="white" p={5} borderRadius="lg" shadow="sm" border="1px" borderColor="gray.100">
+            <Box bg="white" p={6} borderRadius="2xl" shadow="sm" border="1px" borderColor="gray.100">
                 <Table variant="simple">
                     <Thead>
                         <Tr>

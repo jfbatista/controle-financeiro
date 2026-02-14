@@ -28,6 +28,7 @@ import {
   FormLabel,
   useDisclosure,
   HStack,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { Plus, Trash2, Edit2, Check } from 'lucide-react';
 
@@ -140,46 +141,63 @@ export function CategoriesPage() {
       <Heading size="lg" mb="6">Categorias</Heading>
 
       {/* Create Form */}
-      <Box bg="white" p="6" borderRadius="xl" shadow="sm" mb="8">
-        <Heading size="md" mb="4">Nova Categoria</Heading>
+      <Box bg="white" p={6} borderRadius="2xl" shadow="sm" mb="8" border="1px" borderColor="gray.100">
+        <Heading size="md" mb="4" color="gray.700">Nova Categoria</Heading>
         <form onSubmit={handleCreate}>
-          <Flex gap="4" align="flex-end" wrap="wrap">
-            <FormControl flex={1} minW="200px">
-              <FormLabel>Nome</FormLabel>
+          <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5} alignItems="flex-end">
+            <FormControl gridColumn={{ md: "span 2" }}>
+              <FormLabel fontSize="sm" color="gray.500">Nome</FormLabel>
               <Input
                 required
                 placeholder="Ex: Alimentação"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
+                bg="gray.50"
+                border="none"
+                _focus={{ bg: 'white', shadow: 'outline' }}
               />
             </FormControl>
-            <FormControl w="150px">
-              <FormLabel>Tipo</FormLabel>
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.500">Tipo</FormLabel>
               <Select
                 value={newType}
                 onChange={(e) => setNewType(e.target.value as any)}
+                bg="gray.50"
+                border="none"
+                _focus={{ bg: 'white', shadow: 'outline' }}
               >
                 <option value="INCOME">Receita</option>
                 <option value="EXPENSE">Despesa</option>
               </Select>
             </FormControl>
-            <FormControl w="150px">
-              <FormLabel>Cor (Opcional)</FormLabel>
-              <Input
-                placeholder="#000000"
-                value={newColor}
-                onChange={(e) => setNewColor(e.target.value)}
-              />
+            <FormControl>
+              <FormLabel fontSize="sm" color="gray.500">Cor (Opcional)</FormLabel>
+              <HStack>
+                <Input
+                  placeholder="#000000"
+                  value={newColor}
+                  onChange={(e) => setNewColor(e.target.value)}
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
+                />
+                {newColor && (
+                  <Box w="10" h="10" borderRadius="md" bg={newColor} border="1px solid #e2e8f0" flexShrink={0} />
+                )}
+              </HStack>
             </FormControl>
-            <Button
-              type="submit"
-              colorScheme="brand"
-              leftIcon={<Plus size={18} />}
-              isLoading={loading}
-            >
-              Adicionar
-            </Button>
-          </Flex>
+            <Box gridColumn={{ base: "1", md: "4" }} display="flex" justifyContent="flex-end">
+              <Button
+                type="submit"
+                colorScheme="brand"
+                leftIcon={<Plus size={20} />}
+                isLoading={loading}
+                width="full"
+              >
+                Adicionar
+              </Button>
+            </Box>
+          </SimpleGrid>
         </form>
       </Box>
 

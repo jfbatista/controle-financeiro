@@ -7,6 +7,8 @@ import { AuditService } from '../audit/audit.service';
 
 interface FindAllParams {
   companyId: number;
+  page?: number;
+  limit?: number;
   from?: string;
   to?: string;
   type?: TransactionType;
@@ -22,25 +24,44 @@ export class TransactionsService {
   ) { }
 
   async findAll(params: FindAllParams) {
-    const { companyId, from, to, type, categoryId, paymentMethodId } = params;
-    return this.prisma.transaction.findMany({
-      where: {
-        companyId,
-        type,
-        categoryId,
-        paymentMethodId,
-        date: {
-          gte: from ? new Date(from) : undefined,
-          lte: to ? new Date(to) : undefined,
+    const { companyId, from, to, type, categoryId, paymentMethodId, page = 1, limit = 20 } = params;
+    const skip = (page - 1) * limit;
+
+    const where = {
+      companyId,
+      type,
+      categoryId,
+      paymentMethodId,
+      date: {
+        gte: from ? new Date(from) : undefined,
+        lte: to ? new Date(to) : undefined,
+      },
+    };
+
+    const [total, data] = await Promise.all([
+      this.prisma.transaction.count({ where }),
+      this.prisma.transaction.findMany({
+        where,
+        skip,
+        take: Number(limit),
+        orderBy: { date: 'desc' },
+        include: {
+          category: true,
+          paymentMethod: true,
+          attachments: true,
         },
+      }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        lastPage: Math.ceil(total / Number(limit)),
       },
-      orderBy: { date: 'desc' },
-      include: {
-        category: true,
-        paymentMethod: true,
-        attachments: true,
-      },
-    });
+    };
   }
 
   async create(userId: number, companyId: number, dto: CreateTransactionDto) {
@@ -133,7 +154,29 @@ export class TransactionsService {
   }
 
   async export(params: FindAllParams) {
-    const transactions = await this.findAll(params);
+    // Re-implement query construction to fetch ALL records (no pagination)
+    const { companyId, from, to, type, categoryId, paymentMethodId } = params;
+
+    const where = {
+      companyId,
+      type,
+      categoryId,
+      paymentMethodId,
+      date: {
+        gte: from ? new Date(from) : undefined,
+        lte: to ? new Date(to) : undefined,
+      },
+    };
+
+    const transactions = await this.prisma.transaction.findMany({
+      where,
+      orderBy: { date: 'desc' },
+      include: {
+        category: true,
+        paymentMethod: true,
+        attachments: true,
+      },
+    });
 
     // Lazy load exceljs to avoid overhead if not used frequently
     const ExcelJS = require('exceljs');

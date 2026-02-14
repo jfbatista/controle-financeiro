@@ -95,16 +95,23 @@ export function AttachmentsModal({ isOpen, onClose, transactionId, existingAttac
 
     const downloadFile = async (id: number, filename: string) => {
         try {
-            const response = await api.get(`/uploads/${id}`, { responseType: 'blob' });
-            const url = window.URL.createObjectURL(new Blob([response as any]));
+            const response = await api.get<Blob>(`/uploads/${id}`, { responseType: 'blob' });
+            // response is already a Blob due to httpGet implementation
+            const url = window.URL.createObjectURL(response);
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
             link.remove();
-        } catch (e) {
-            toast({ status: 'error', title: 'Erro ao baixar arquivo' });
+            window.URL.revokeObjectURL(url);
+        } catch (e: any) {
+            console.error('Download error:', e);
+            toast({
+                status: 'error',
+                title: 'Erro ao baixar arquivo',
+                description: e.message || 'Verifique sua conexão ou permissões.'
+            });
         }
     };
 

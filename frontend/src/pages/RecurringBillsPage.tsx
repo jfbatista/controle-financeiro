@@ -21,6 +21,7 @@ import {
     FormLabel,
     IconButton,
     Text,
+    SimpleGrid,
 } from '@chakra-ui/react';
 import { Plus, Trash2 } from 'lucide-react';
 
@@ -119,33 +120,24 @@ export function RecurringBillsPage() {
             <Text color="gray.500" mb="6">Cadastre aqui suas contas que se repetem todo mês (Aluguel, Internet, etc).</Text>
 
             {/* Form */}
-            <Box bg="white" p="6" borderRadius="xl" shadow="sm" mb="8">
+            <Box bg="white" p={6} borderRadius="2xl" shadow="sm" mb="8" border="1px" borderColor="gray.100">
                 <Heading size="md" mb="4">Nova Conta Fixa</Heading>
                 <form onSubmit={handleCreate}>
-                    <VStack spacing={4} align="stretch">
-                        <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-                            <FormControl>
-                                <FormLabel>Tipo</FormLabel>
-                                <Select value={type} onChange={(e) => setType(e.target.value as TransactionType)}>
-                                    <option value="EXPENSE">Saída</option>
-                                    <option value="INCOME">Entrada</option>
-                                </Select>
-                            </FormControl>
-
-                            <FormControl>
-                                <FormLabel>Dia do Vencimento</FormLabel>
+                    <VStack spacing={5} align="stretch">
+                        <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5}>
+                            <FormControl gridColumn={{ md: "span 3" }}>
+                                <FormLabel fontSize="sm" color="gray.500">Descrição</FormLabel>
                                 <Input
-                                    type="number"
-                                    min="1" max="31"
-                                    placeholder="Dia"
-                                    value={dueDay}
-                                    onChange={(e) => setDueDay(e.target.value)}
-                                    required
+                                    placeholder="Ex: Aluguel Loja Centro, Conta de Luz, Internet Fibra, etc."
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
-
                             <FormControl>
-                                <FormLabel>Valor Estimado</FormLabel>
+                                <FormLabel fontSize="sm" color="gray.500">Valor Estimado</FormLabel>
                                 <Input
                                     type="number"
                                     step="0.01"
@@ -153,38 +145,75 @@ export function RecurringBillsPage() {
                                     value={amountExpected}
                                     onChange={(e) => setAmountExpected(e.target.value)}
                                     required
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
+                                    fontWeight="bold"
                                 />
                             </FormControl>
-                        </Flex>
+                        </SimpleGrid>
 
-                        <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-                            <FormControl flex={1}>
-                                <FormLabel>Categoria</FormLabel>
+                        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5}>
+                            <FormControl>
+                                <FormLabel fontSize="sm" color="gray.500">Categoria</FormLabel>
                                 <Select
                                     value={categoryId}
                                     onChange={(e) => setCategoryId(e.target.value)}
                                     placeholder="Selecione"
                                     required
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 >
                                     {visibleCategories.map((c) => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </Select>
                             </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontSize="sm" color="gray.500">Tipo</FormLabel>
+                                <Select
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value as TransactionType)}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
+                                >
+                                    <option value="EXPENSE">Saída</option>
+                                    <option value="INCOME">Entrada</option>
+                                </Select>
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontSize="sm" color="gray.500">Dia do Vencimento</FormLabel>
+                                <Input
+                                    type="number"
+                                    min="1" max="31"
+                                    placeholder="Dia (1-31)"
+                                    value={dueDay}
+                                    onChange={(e) => setDueDay(e.target.value)}
+                                    required
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
+                                />
+                            </FormControl>
+                        </SimpleGrid>
+
+                        <Flex justify="flex-end">
+                            <Button
+                                type="submit"
+                                leftIcon={<Plus size={20} />}
+                                colorScheme="brand"
+                                size="lg"
+                                px={8}
+                                boxShadow="md"
+                                _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+                            >
+                                Salvar Conta
+                            </Button>
                         </Flex>
-
-                        <FormControl>
-                            <FormLabel>Descrição</FormLabel>
-                            <Input
-                                placeholder="Ex: Aluguel Loja Centro, Conta de Luz, Internet Fibra, etc."
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                        </FormControl>
-
-                        <Button type="submit" leftIcon={<Plus size={18} />} colorScheme="brand" alignSelf="flex-end">
-                            Salvar
-                        </Button>
                     </VStack>
                 </form>
             </Box>

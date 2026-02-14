@@ -110,24 +110,28 @@ export function PaymentMethodsPage() {
       <Heading size="lg" mb="6">Formas de Pagamento</Heading>
 
       {/* Create Form */}
-      <Box bg="white" p="6" borderRadius="xl" shadow="sm" mb="8">
-        <Heading size="md" mb="4">Nova Forma de Pagamento</Heading>
+      <Box bg="white" p={6} borderRadius="2xl" shadow="sm" mb="8" border="1px" borderColor="gray.100">
+        <Heading size="md" mb="4" color="gray.700">Nova Forma de Pagamento</Heading>
         <form onSubmit={handleCreate}>
           <Flex gap="4" align="flex-end">
             <FormControl flex={1}>
-              <FormLabel>Nome</FormLabel>
+              <FormLabel fontSize="sm" color="gray.500">Nome</FormLabel>
               <Input
                 required
                 placeholder="Ex: Cartão de Crédito"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
+                bg="gray.50"
+                border="none"
+                _focus={{ bg: 'white', shadow: 'outline' }}
               />
             </FormControl>
             <Button
               type="submit"
               colorScheme="brand"
-              leftIcon={<Plus size={18} />}
+              leftIcon={<Plus size={20} />}
               isLoading={loading}
+              px={8}
             >
               Adicionar
             </Button>

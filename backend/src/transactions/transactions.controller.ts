@@ -35,6 +35,8 @@ export class TransactionsController {
     @Query('type') type?: TransactionType,
     @Query('categoryId') categoryId?: string,
     @Query('paymentMethodId') paymentMethodId?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
     return this.transactionsService.findAll({
       companyId: req.user.companyId,
@@ -43,6 +45,8 @@ export class TransactionsController {
       type,
       categoryId: categoryId ? Number(categoryId) : undefined,
       paymentMethodId: paymentMethodId ? Number(paymentMethodId) : undefined,
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 20,
     });
   }
 

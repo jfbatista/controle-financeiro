@@ -32,16 +32,20 @@ export async function httpPost<TResponse, TBody = unknown>(
   options?: { token?: string },
 ): Promise<TResponse> {
   const url = `${apiConfig.baseUrl}${path}`;
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
+  const headers: Record<string, string> = {};
+
+  if (!(body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   if (options?.token) {
     headers.Authorization = `Bearer ${options.token}`;
   }
+
   const response = await fetch(url, {
     method: 'POST',
     headers,
-    body: JSON.stringify(body),
+    body: body instanceof FormData ? body : JSON.stringify(body),
   });
   return handleResponse<TResponse>(response);
 }
@@ -86,20 +90,47 @@ export async function httpPatch<TResponse, TBody = unknown>(
   return handleResponse<TResponse>(response);
 }
 
+export interface HttpOptions {
+  token?: string;
+  responseType?: 'json' | 'blob' | 'text';
+}
+
 export async function httpGet<TResponse>(
   path: string,
-  options?: { token?: string },
+  options?: HttpOptions,
 ): Promise<TResponse> {
   const url = `${apiConfig.baseUrl}${path}`;
-  const headers: HeadersInit = {};
+  const headers: Record<string, string> = {};
   if (options?.token) {
     headers.Authorization = `Bearer ${options.token}`;
   }
+
   const response = await fetch(url, {
     method: 'GET',
     headers,
   });
-  return handleResponse<TResponse>(response);
+
+  if (!response.ok) {
+    let body: any = null;
+    try {
+      body = await response.json();
+    } catch {
+      // ignore
+    }
+    const error: HttpError = new Error(
+      body?.message || `Erro HTTP ${response.status}`,
+    );
+    error.status = response.status;
+    error.details = body;
+    throw error;
+  }
+
+  if (options?.responseType === 'blob') {
+    return response.blob() as any;
+  }
+
+  const text = await response.text();
+  return (text ? JSON.parse(text) : undefined) as any;
 }
 
 export async function httpDelete<TResponse>(

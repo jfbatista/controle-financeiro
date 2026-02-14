@@ -29,8 +29,11 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  SimpleGrid,
+  Text,
+  Icon,
 } from '@chakra-ui/react';
-import { Plus, Filter, Trash2, Edit2, Check, Download, Paperclip } from 'lucide-react';
+import { Plus, Filter, Trash2, Edit2, Check, Download, Paperclip, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Permission } from '../config/permissions';
 import { useAuthStore } from '../store/auth';
 import { saveAs } from 'file-saver';
@@ -90,6 +93,12 @@ export function TransactionsPage() {
   const [filterTo, setFilterTo] = useState('');
   const [filterType, setFilterType] = useState<'ALL' | TransactionType>('ALL');
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  const [file, setFile] = useState<File | null>(null);
+
   // Edit States
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editingItem, setEditingItem] = useState<any | null>(null);
@@ -111,17 +120,29 @@ export function TransactionsPage() {
     }
   }
 
-  async function loadTransactions() {
+  async function loadTransactions(currentPage = page) {
     try {
       const params = new URLSearchParams();
       if (filterFrom) params.append('from', filterFrom);
       if (filterTo) params.append('to', filterTo);
       if (filterType !== 'ALL') params.append('type', filterType);
+
+      params.append('page', currentPage.toString());
+      params.append('limit', limit.toString());
+
       const qs = params.toString();
-      const data = await api.get<Transaction[]>(
+      const response: any = await api.get(
         `/transactions${qs ? `?${qs}` : ''}`,
       );
-      setTransactions(data);
+
+      if (response.data && response.meta) {
+        setTransactions(response.data);
+        setTotal(response.meta.total);
+      } else {
+        // Fallback if backend not updated
+        setTransactions(response);
+        setTotal(response.length);
+      }
     } catch (e: any) {
       toast.error('Erro ao carregar lançamentos.', e?.message);
     }
@@ -148,12 +169,12 @@ export function TransactionsPage() {
   useEffect(() => {
     loadLookups();
     loadTransactions();
-  }, []);
+  }, [limit]); // Reload when limit changes
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await api.post<Transaction, any>('/transactions', {
+      const response: any = await api.post<Transaction, any>('/transactions', {
         type,
         date,
         amount: Number(amount),
@@ -161,9 +182,23 @@ export function TransactionsPage() {
         paymentMethodId: Number(paymentMethodId),
         description: description || undefined,
       });
+
+      if (file && response?.id) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          // We use the same endpoint as the modal
+          await api.post(`/uploads/transaction/${response.id}`, formData);
+        } catch (uploadError) {
+          console.error(uploadError);
+          toast.warning('Lançamento criado, mas erro no anexo.');
+        }
+      }
+
       setAmount('');
       setDescription('');
-      await loadTransactions();
+      setFile(null);
+      await loadTransactions(1);
       toast.success('Lançamento criado!');
     } catch (e: any) {
       toast.error('Erro ao criar lançamento.', e?.message);
@@ -174,7 +209,7 @@ export function TransactionsPage() {
     if (!confirm('Deseja excluir este lançamento?')) return;
     try {
       await api.del(`/transactions/${id}`);
-      await loadTransactions();
+      await loadTransactions(page);
       toast.info('Excluído');
     } catch (e: any) {
       toast.error('Erro ao excluir', e?.message);
@@ -211,7 +246,7 @@ export function TransactionsPage() {
         description: editingItem.description,
       });
       onClose();
-      await loadTransactions();
+      await loadTransactions(page);
       toast.success('Atualizado!');
     } catch (e: any) {
       toast.error('Erro ao atualizar', e?.message);
@@ -232,26 +267,29 @@ export function TransactionsPage() {
       <Heading size="lg" mb="6">Lançamentos</Heading>
 
       {/* New Transaction Form */}
-      <Box bg="white" p="6" borderRadius="xl" shadow="sm" mb="8">
-        <Heading size="md" mb="4">Novo Lançamento</Heading>
+      <Box bg="white" p={6} borderRadius="2xl" shadow="sm" mb="8" border="1px" borderColor="gray.100">
+        <Flex justify="space-between" align="center" mb={6}>
+          <Heading size="md" color="gray.700">Novo Lançamento</Heading>
+          <Badge colorScheme="brand" p={2} borderRadius="lg">Registro Rápido</Badge>
+        </Flex>
+
         <form onSubmit={handleCreate}>
-          <VStack spacing={4} align="stretch">
-            <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-              <FormControl>
-                <FormLabel>Tipo</FormLabel>
-                <Select value={type} onChange={(e) => setType(e.target.value as TransactionType)}>
-                  <option value="INCOME">Entrada</option>
-                  <option value="EXPENSE">Saída</option>
-                </Select>
+          <VStack spacing={5} align="stretch">
+            <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5}>
+              <FormControl gridColumn={{ md: "span 3" }}>
+                <FormLabel fontSize="sm" color="gray.500">Descrição</FormLabel>
+                <Input
+                  placeholder="Ex: Compra de mercadorias, Pagamento Salário..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
+                />
               </FormControl>
 
               <FormControl>
-                <FormLabel>Data</FormLabel>
-                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Valor</FormLabel>
+                <FormLabel fontSize="sm" color="gray.500">Valor</FormLabel>
                 <Input
                   type="number"
                   step="0.01"
@@ -259,18 +297,51 @@ export function TransactionsPage() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   required
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
+                  fontWeight="bold"
                 />
               </FormControl>
-            </Flex>
+            </SimpleGrid>
 
-            <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-              <FormControl flex={1}>
-                <FormLabel>Categoria</FormLabel>
+            <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5}>
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.500">Tipo</FormLabel>
+                <Select
+                  value={type}
+                  onChange={(e) => setType(e.target.value as TransactionType)}
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
+                >
+                  <option value="INCOME">Entrada</option>
+                  <option value="EXPENSE">Saída</option>
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.500">Data</FormLabel>
+                <Input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.500">Categoria</FormLabel>
                 <Select
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
                   placeholder="Selecione"
                   required
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
                 >
                   {visibleCategories.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
@@ -278,33 +349,92 @@ export function TransactionsPage() {
                 </Select>
               </FormControl>
 
-              <FormControl flex={1}>
-                <FormLabel>Forma de Pagamento</FormLabel>
+              <FormControl>
+                <FormLabel fontSize="sm" color="gray.500">Forma de Pag.</FormLabel>
                 <Select
                   value={paymentMethodId}
                   onChange={(e) => setPaymentMethodId(e.target.value)}
                   placeholder="Selecione"
                   required
+                  bg="gray.50"
+                  border="none"
+                  _focus={{ bg: 'white', shadow: 'outline' }}
                 >
                   {methods.map((m) => (
                     <option key={m.id} value={m.id}>{m.name}</option>
                   ))}
                 </Select>
               </FormControl>
-            </Flex>
+            </SimpleGrid>
 
             <FormControl>
-              <FormLabel>Descrição</FormLabel>
-              <Input
-                placeholder="Ex: Compra de mercadorias, Pagamento fornecedor, Venda produto X, etc."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+              <FormLabel fontSize="sm" color="gray.500">Anexo (Opcional)</FormLabel>
+              <Box
+                position="relative"
+                h="45px"
+                borderRadius="md"
+                border="1px dashed"
+                borderColor={file ? "brand.500" : "gray.200"}
+                bg={file ? "brand.50" : "gray.50"}
+                _hover={{ borderColor: "brand.500", bg: "gray.100" }}
+                display="flex"
+                alignItems="center"
+                px={4}
+                transition="all 0.2s"
+                cursor="pointer"
+              >
+                <Input
+                  type="file"
+                  height="100%"
+                  width="100%"
+                  position="absolute"
+                  top="0"
+                  left="0"
+                  opacity="0"
+                  cursor="pointer"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  zIndex={2}
+                />
+                <Flex align="center" gap={3} width="100%">
+                  <Icon as={Paperclip} boxSize={5} color={file ? "brand.500" : "gray.400"} />
+                  <VStack align="start" spacing={0} flex={1}>
+                    <Text fontSize="sm" fontWeight={file ? "medium" : "normal"} color={file ? "brand.700" : "gray.500"} isTruncated maxW="100%">
+                      {file ? file.name : "Clique para anexar um comprovante ou documento"}
+                    </Text>
+                  </VStack>
+                  {file && (
+                    <IconButton
+                      aria-label="Remover"
+                      icon={<Trash2 size={16} />}
+                      size="xs"
+                      variant="ghost"
+                      colorScheme="red"
+                      zIndex={3}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setFile(null);
+                        // Reset input value if needed
+                      }}
+                    />
+                  )}
+                </Flex>
+              </Box>
             </FormControl>
 
-            <Button type="submit" leftIcon={<Plus size={18} />} colorScheme="brand" alignSelf="flex-end">
-              Adicionar
-            </Button>
+            <Flex justify="flex-end">
+              <Button
+                type="submit"
+                leftIcon={<Plus size={20} />}
+                colorScheme="brand"
+                size="lg"
+                px={8}
+                boxShadow="md"
+                _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+              >
+                Adicionar Lançamento
+              </Button>
+            </Flex>
           </VStack>
         </form>
       </Box>
@@ -345,7 +475,7 @@ export function TransactionsPage() {
               <option value="EXPENSE">Saídas</option>
             </Select>
           </Box>
-          <Button size="sm" onClick={loadTransactions} leftIcon={<Filter size={14} />}>
+          <Button size="sm" onClick={() => { setPage(1); loadTransactions(1); }} leftIcon={<Filter size={14} />}>
             Filtrar
           </Button>
           <Button size="sm" onClick={handleExport} leftIcon={<Download size={14} />} colorScheme="green" variant="outline">
@@ -439,6 +569,66 @@ export function TransactionsPage() {
         </TableContainer>
       </Box>
 
+      {/* Pagination Controls */}
+      <Flex justify="space-between" align="center" mt={4} px={2} direction={{ base: 'column', md: 'row' }} gap={4}>
+        <HStack>
+          <Text fontSize="sm" color="gray.600">
+            Mostrando {transactions.length} de {total} registros
+          </Text>
+          <Select
+            size="sm"
+            maxW="80px"
+            value={limit}
+            onChange={(e) => {
+              const newLimit = Number(e.target.value);
+              setLimit(newLimit);
+              setPage(1);
+            }}
+            bg="white"
+            borderRadius="md"
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </Select>
+          <Text fontSize="sm" color="gray.600">por página</Text>
+        </HStack>
+
+        <HStack>
+          <Button
+            size="sm"
+            onClick={() => {
+              const newPage = Math.max(1, page - 1);
+              setPage(newPage);
+              loadTransactions(newPage);
+            }}
+            isDisabled={page === 1}
+            leftIcon={<ChevronLeft size={16} />}
+            bg="white"
+            boxShadow="sm"
+          >
+            Anterior
+          </Button>
+          <Text fontSize="sm" fontWeight="bold">
+            Página {page} de {Math.max(1, Math.ceil(total / limit))}
+          </Text>
+          <Button
+            size="sm"
+            onClick={() => {
+              const newPage = page + 1;
+              setPage(newPage);
+              loadTransactions(newPage);
+            }}
+            isDisabled={page * limit >= total}
+            rightIcon={<ChevronRight size={16} />}
+            bg="white"
+            boxShadow="sm"
+          >
+            Próximo
+          </Button>
+        </HStack>
+      </Flex>
+
       {/* Edit Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
@@ -528,7 +718,7 @@ export function TransactionsPage() {
           onClose={onAttachmentsClose}
           transactionId={selectedTransactionForAttachments.id}
           existingAttachments={selectedTransactionForAttachments.attachments}
-          onUpdate={loadTransactions}
+          onUpdate={() => loadTransactions(page)}
         />
       )}
     </Box>

@@ -151,74 +151,122 @@ export function DashboardPage() {
 
       {/* Monthly Comparison Cards */}
       {comparison && (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={5} mb="8">
-          <Card borderLeft="4px solid" borderLeftColor="brand.500">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb="8">
+          <Card
+            bg="white"
+            borderRadius="2xl"
+            shadow="lg"
+            border="1px"
+            borderColor="gray.100"
+            _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
+            transition="all 0.3s"
+          >
             <CardBody>
               <Stat>
-                <Flex alignItems="center" mb="2">
-                  <Icon as={TrendingUp} color="brand.500" mr="2" />
-                  <StatLabel color="gray.500">Receitas (Mês Atual)</StatLabel>
+                <Flex alignItems="center" mb="2" justify="space-between">
+                  <Box p={2} bg="brand.50" borderRadius="lg">
+                    <Icon as={TrendingUp} color="brand.500" w={5} h={5} />
+                  </Box>
+                  <Badge colorScheme="green" variant="subtle" borderRadius="full" px={2}>
+                    Receitas
+                  </Badge>
                 </Flex>
-                <StatNumber color="brand.600">
+                <StatNumber fontSize="2xl" fontWeight="800" color="gray.700" mb={1}>
                   {formatCurrency(comparison.current.income)}
                 </StatNumber>
-                <StatHelpText>
+                <StatHelpText m={0} fontSize="sm" color={comparison.changes.income >= 0 ? 'green.500' : 'red.500'} fontWeight="medium">
                   <StatArrow type={comparison.changes.income >= 0 ? 'increase' : 'decrease'} />
-                  {Math.abs(comparison.changes.income).toFixed(1)}% vs mês anterior
+                  {Math.abs(comparison.changes.income).toFixed(1)}% <Text as="span" color="gray.400" fontWeight="normal">vs mês anterior</Text>
                 </StatHelpText>
               </Stat>
             </CardBody>
           </Card>
 
-          <Card borderLeft="4px solid" borderLeftColor="red.500">
+          <Card
+            bg="white"
+            borderRadius="2xl"
+            shadow="lg"
+            border="1px"
+            borderColor="gray.100"
+            _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
+            transition="all 0.3s"
+          >
             <CardBody>
               <Stat>
-                <Flex alignItems="center" mb="2">
-                  <Icon as={TrendingDown} color="red.500" mr="2" />
-                  <StatLabel color="gray.500">Despesas (Mês Atual)</StatLabel>
+                <Flex alignItems="center" mb="2" justify="space-between">
+                  <Box p={2} bg="red.50" borderRadius="lg">
+                    <Icon as={TrendingDown} color="red.500" w={5} h={5} />
+                  </Box>
+                  <Badge colorScheme="red" variant="subtle" borderRadius="full" px={2}>
+                    Despesas
+                  </Badge>
                 </Flex>
-                <StatNumber color="red.600">
+                <StatNumber fontSize="2xl" fontWeight="800" color="gray.700" mb={1}>
                   {formatCurrency(comparison.current.expenses)}
                 </StatNumber>
-                <StatHelpText>
+                <StatHelpText m={0} fontSize="sm" color={comparison.changes.expenses >= 0 ? 'green.500' : 'red.500'} fontWeight="medium">
                   <StatArrow type={comparison.changes.expenses >= 0 ? 'increase' : 'decrease'} />
-                  {Math.abs(comparison.changes.expenses).toFixed(1)}% vs mês anterior
+                  {Math.abs(comparison.changes.expenses).toFixed(1)}% <Text as="span" color="gray.400" fontWeight="normal">vs mês anterior</Text>
                 </StatHelpText>
               </Stat>
             </CardBody>
           </Card>
 
-          <Card borderLeft="4px solid" borderLeftColor={comparison.current.net >= 0 ? 'green.500' : 'red.500'}>
+          <Card
+            bg="white"
+            borderRadius="2xl"
+            shadow="lg"
+            border="1px"
+            borderColor="gray.100"
+            _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
+            transition="all 0.3s"
+          >
             <CardBody>
               <Stat>
-                <Flex alignItems="center" mb="2">
-                  <Icon as={DollarSign} color={comparison.current.net >= 0 ? 'green.500' : 'red.500'} mr="2" />
-                  <StatLabel color="gray.500">Saldo (Mês Atual)</StatLabel>
+                <Flex alignItems="center" mb="2" justify="space-between">
+                  <Box p={2} bg={comparison.current.net >= 0 ? 'blue.50' : 'orange.50'} borderRadius="lg">
+                    <Icon as={DollarSign} color={comparison.current.net >= 0 ? 'blue.500' : 'orange.500'} w={5} h={5} />
+                  </Box>
+                  <Badge colorScheme={comparison.current.net >= 0 ? 'blue' : 'orange'} variant="subtle" borderRadius="full" px={2}>
+                    Saldo
+                  </Badge>
                 </Flex>
-                <StatNumber color={comparison.current.net >= 0 ? 'green.600' : 'red.600'}>
+                <StatNumber fontSize="2xl" fontWeight="800" color={comparison.current.net >= 0 ? 'blue.600' : 'orange.600'} mb={1}>
                   {formatCurrency(comparison.current.net)}
                 </StatNumber>
-                <StatHelpText>
+                <StatHelpText m={0} fontSize="sm" color={comparison.changes.net >= 0 ? 'green.500' : 'red.500'} fontWeight="medium">
                   <StatArrow type={comparison.changes.net >= 0 ? 'increase' : 'decrease'} />
-                  {Math.abs(comparison.changes.net).toFixed(1)}% vs mês anterior
+                  {Math.abs(comparison.changes.net).toFixed(1)}% <Text as="span" color="gray.400" fontWeight="normal">vs mês anterior</Text>
                 </StatHelpText>
               </Stat>
             </CardBody>
           </Card>
 
-          <Card borderLeft="4px solid" borderLeftColor="purple.500">
+          <Card
+            bg="white"
+            borderRadius="2xl"
+            shadow="lg"
+            border="1px"
+            borderColor="gray.100"
+            _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
+            transition="all 0.3s"
+          >
             <CardBody>
               <Stat>
-                <Flex alignItems="center" mb="2">
-                  <Icon as={Activity} color="purple.500" mr="2" />
-                  <StatLabel color="gray.500">Transações</StatLabel>
+                <Flex alignItems="center" mb="2" justify="space-between">
+                  <Box p={2} bg="purple.50" borderRadius="lg">
+                    <Icon as={Activity} color="purple.500" w={5} h={5} />
+                  </Box>
+                  <Badge colorScheme="purple" variant="subtle" borderRadius="full" px={2}>
+                    Transações
+                  </Badge>
                 </Flex>
-                <StatNumber color="purple.600">
+                <StatNumber fontSize="2xl" fontWeight="800" color="gray.700" mb={1}>
                   {comparison.current.count}
                 </StatNumber>
-                <StatHelpText>
+                <StatHelpText m={0} fontSize="sm" color={comparison.changes.count >= 0 ? 'green.500' : 'red.500'} fontWeight="medium">
                   <StatArrow type={comparison.changes.count >= 0 ? 'increase' : 'decrease'} />
-                  {Math.abs(comparison.changes.count).toFixed(0)} vs mês anterior
+                  {Math.abs(comparison.changes.count).toFixed(0)} <Text as="span" color="gray.400" fontWeight="normal">vs mês anterior</Text>
                 </StatHelpText>
               </Stat>
             </CardBody>

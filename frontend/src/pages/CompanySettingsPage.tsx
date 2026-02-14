@@ -15,6 +15,7 @@ import {
     Text,
     Alert,
     AlertIcon,
+    SimpleGrid,
 } from '@chakra-ui/react';
 import { Save } from 'lucide-react';
 import { useAuthStore } from '../store/auth';
@@ -97,122 +98,150 @@ export function CompanySettingsPage() {
         <Box>
             <Heading size="lg" mb="6">Configurações da Empresa</Heading>
 
-            <Box as="form" onSubmit={handleSave} bg="white" p="6" borderRadius="xl" shadow="sm">
-                <VStack spacing={6} align="stretch">
+            <Box as="form" onSubmit={handleSave} bg="white" p={8} borderRadius="2xl" shadow="sm" border="1px" borderColor="gray.100">
+                <VStack spacing={8} align="stretch">
 
                     <Box>
-                        <Heading size="md" mb="4">Dados Gerais</Heading>
-                        <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
+                        <Heading size="md" mb="6" color="gray.700">Dados Gerais</Heading>
+                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl isRequired>
-                                <FormLabel>Nome da Empresa</FormLabel>
+                                <FormLabel fontSize="sm" color="gray.500">Nome da Empresa</FormLabel>
                                 <Input
                                     value={data.name}
                                     onChange={(e) => setData({ ...data, name: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
 
                             <FormControl>
-                                <FormLabel>CNPJ / Documento</FormLabel>
+                                <FormLabel fontSize="sm" color="gray.500">CNPJ / Documento</FormLabel>
                                 <Input
                                     value={data.document || ''}
                                     onChange={(e) => setData({ ...data, document: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
-                        </Flex>
 
-                        <FormControl mt="4">
-                            <FormLabel>E-mail de Contato</FormLabel>
-                            <Input
-                                type="email"
-                                value={data.contactEmail || ''}
-                                onChange={(e) => setData({ ...data, contactEmail: e.target.value })}
-                            />
-                        </FormControl>
+                            <FormControl gridColumn={{ md: "span 2" }}>
+                                <FormLabel fontSize="sm" color="gray.500">E-mail de Contato</FormLabel>
+                                <Input
+                                    type="email"
+                                    value={data.contactEmail || ''}
+                                    onChange={(e) => setData({ ...data, contactEmail: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
+                                />
+                            </FormControl>
+                        </SimpleGrid>
                     </Box>
 
-                    <Divider />
+                    <Divider borderColor="gray.200" />
 
                     <Box>
-                        <Heading size="md" mb="2">Configuração de E-mail (SMTP)</Heading>
-                        <Text fontSize="sm" color="gray.500" mb="4">
+                        <Heading size="md" mb="2" color="gray.700">Configuração de E-mail (SMTP)</Heading>
+                        <Text fontSize="sm" color="gray.500" mb="6">
                             Necessário para envio de e-mails do sistema (ex: recuperação de senha).
                         </Text>
 
-                        <Flex gap="4" direction={{ base: 'column', md: 'row' }}>
-                            <FormControl flex={2}>
-                                <FormLabel>Servidor SMTP (Host)</FormLabel>
+                        <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
+                            <FormControl gridColumn={{ md: "span 2" }}>
+                                <FormLabel fontSize="sm" color="gray.500">Servidor SMTP (Host)</FormLabel>
                                 <Input
                                     placeholder="smtp.exemplo.com"
                                     value={data.smtpHost || ''}
                                     onChange={(e) => setData({ ...data, smtpHost: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
 
-                            <FormControl flex={1}>
-                                <FormLabel>Porta</FormLabel>
+                            <FormControl>
+                                <FormLabel fontSize="sm" color="gray.500">Porta</FormLabel>
                                 <Input
                                     type="number"
                                     placeholder="587"
                                     value={data.smtpPort || ''}
                                     onChange={(e) => setData({ ...data, smtpPort: Number(e.target.value) })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
 
-                            <FormControl display="flex" alignItems="center" mt="8">
-                                <FormLabel htmlFor="smtp-secure" mb="0">
+                            <FormControl display="flex" alignItems="center" justifyContent={{ md: "flex-start" }} pt={{ md: 6 }}>
+                                <FormLabel htmlFor="smtp-secure" mb="0" mr={3} fontSize="sm" color="gray.500">
                                     Usar SSL/TLS?
                                 </FormLabel>
                                 <Switch
                                     id="smtp-secure"
                                     isChecked={data.smtpSecure}
                                     onChange={(e) => setData({ ...data, smtpSecure: e.target.checked })}
+                                    colorScheme="brand"
                                 />
                             </FormControl>
-                        </Flex>
 
-                        <Flex gap="4" direction={{ base: 'column', md: 'row' }} mt="4">
-                            <FormControl>
-                                <FormLabel>Usuário SMTP</FormLabel>
+                            <FormControl gridColumn={{ md: "span 2" }}>
+                                <FormLabel fontSize="sm" color="gray.500">Usuário SMTP</FormLabel>
                                 <Input
                                     placeholder="usuario@exemplo.com"
                                     value={data.smtpUser || ''}
                                     onChange={(e) => setData({ ...data, smtpUser: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
 
-                            <FormControl>
-                                <FormLabel>Senha SMTP</FormLabel>
+                            <FormControl gridColumn={{ md: "span 2" }}>
+                                <FormLabel fontSize="sm" color="gray.500">Senha SMTP</FormLabel>
                                 <Input
                                     type="password"
                                     placeholder="********"
                                     value={data.smtpPass || ''}
                                     onChange={(e) => setData({ ...data, smtpPass: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
                                 />
                             </FormControl>
-                        </Flex>
 
-                        <FormControl mt="4">
-                            <FormLabel>E-mail de Remetente (From)</FormLabel>
-                            <Input
-                                placeholder="nao-responda@suaempresa.com"
-                                value={data.smtpFrom || ''}
-                                onChange={(e) => setData({ ...data, smtpFrom: e.target.value })}
-                            />
-                            <Text fontSize="xs" color="gray.500">
-                                Se vazio, será usado o usuário SMTP ou padrão do sistema.
-                            </Text>
-                        </FormControl>
+                            <FormControl gridColumn={{ md: "span 4" }}>
+                                <FormLabel fontSize="sm" color="gray.500">E-mail de Remetente (From)</FormLabel>
+                                <Input
+                                    placeholder="nao-responda@suaempresa.com"
+                                    value={data.smtpFrom || ''}
+                                    onChange={(e) => setData({ ...data, smtpFrom: e.target.value })}
+                                    bg="gray.50"
+                                    border="none"
+                                    _focus={{ bg: 'white', shadow: 'outline' }}
+                                />
+                                <Text fontSize="xs" color="gray.400" mt={1}>
+                                    Se vazio, será usado o usuário SMTP ou padrão do sistema.
+                                </Text>
+                            </FormControl>
+                        </SimpleGrid>
                     </Box>
 
-                    <Button
-                        type="submit"
-                        colorScheme="brand"
-                        leftIcon={<Save size={18} />}
-                        alignSelf="flex-end"
-                        isLoading={loading}
-                    >
-                        Salvar Configurações
-                    </Button>
+                    <Flex justify="flex-end" pt={4}>
+                        <Button
+                            type="submit"
+                            colorScheme="brand"
+                            leftIcon={<Save size={18} />}
+                            size="lg"
+                            isLoading={loading}
+                            px={8}
+                            boxShadow="md"
+                            _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+                        >
+                            Salvar Configurações
+                        </Button>
+                    </Flex>
                 </VStack>
             </Box>
         </Box>

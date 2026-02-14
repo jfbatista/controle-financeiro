@@ -9,7 +9,8 @@ export function useAuthApi() {
   }
 
   return {
-    get: <T>(path: string) => httpGet<T>(path, withToken()),
+    get: <T>(path: string, options?: { responseType?: 'json' | 'blob' | 'text' }) =>
+      httpGet<T>(path, { ...withToken(), ...options }),
     post: <TResp, TBody = unknown>(path: string, body: TBody) =>
       httpPost<TResp, TBody>(path, body, withToken()),
     put: <TResp, TBody = unknown>(path: string, body: TBody) =>

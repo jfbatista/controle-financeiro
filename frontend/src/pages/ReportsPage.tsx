@@ -29,7 +29,7 @@ import {
     GridItem,
     Divider,
 } from '@chakra-ui/react';
-import { Download, FileText, TrendingUp, TrendingDown } from 'lucide-react';
+import { Download, FileText, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { useAuthApi } from '../services/authFetch';
 import { useCustomToast } from '../hooks/useCustomToast';
 import jsPDF from 'jspdf';
@@ -138,93 +138,138 @@ export function ReportsPage() {
     }
 
     return (
-        <Box>
-            <Heading size="lg" mb="6">Relatórios Avançados</Heading>
-
-            <Tabs variant="enclosed" colorScheme="brand" bg="white" p="4" borderRadius="lg" shadow="sm">
-                <TabList>
-                    <Tab><FileText size={18} style={{ marginRight: 8 }} /> DRE (Demonstrativo)</Tab>
-                    <Tab>Fluxo de Caixa</Tab>
-                    <Tab>Balanço Patrimonial</Tab>
+        <Box maxW="container.xl" mx="auto" pb={10}>
+            <Tabs variant="soft-rounded" colorScheme="brand" isLazy>
+                <TabList mb={6} bg="white" p={2} borderRadius="full" shadow="sm" display="inline-flex">
+                    <Tab _selected={{ bg: 'brand.500', color: 'white', shadow: 'md' }}>
+                        <Flex align="center" gap={2}><FileText size={18} /> DRE</Flex>
+                    </Tab>
+                    <Tab _selected={{ bg: 'brand.500', color: 'white', shadow: 'md' }}>
+                        <Flex align="center" gap={2}><TrendingUp size={18} /> Fluxo de Caixa</Flex>
+                    </Tab>
+                    <Tab _selected={{ bg: 'brand.500', color: 'white', shadow: 'md' }}>
+                        <Flex align="center" gap={2}><DollarSign size={18} /> Balanço</Flex>
+                    </Tab>
                 </TabList>
 
                 <TabPanels>
-                    <TabPanel>
+                    <TabPanel px={0}>
                         {/* DRE Controls */}
-                        <Flex gap="4" mb="6" align="flex-end" bg="gray.50" p="4" borderRadius="md">
-                            <FormControl>
-                                <FormLabel>De</FormLabel>
-                                <Input type="date" bg="white" value={dreFrom} onChange={e => setDreFrom(e.target.value)} />
-                            </FormControl>
-                            <FormControl>
-                                <FormLabel>Até</FormLabel>
-                                <Input type="date" bg="white" value={dreTo} onChange={e => setDreTo(e.target.value)} />
-                            </FormControl>
-                            <Button colorScheme="brand" onClick={loadDRE} isLoading={loading}>
-                                Gerar Relatório
-                            </Button>
-                        </Flex>
+                        <Box bg="white" p={6} borderRadius="xl" shadow="sm" mb={6} border="1px" borderColor="gray.100">
+                            <Flex gap="4" align="flex-end" wrap={{ base: 'wrap', md: 'nowrap' }}>
+                                <FormControl>
+                                    <FormLabel fontSize="sm" color="gray.500">Período De</FormLabel>
+                                    <Input
+                                        type="date"
+                                        size="lg"
+                                        bg="gray.50"
+                                        border="0"
+                                        _focus={{ bg: 'white', shadow: 'outline' }}
+                                        value={dreFrom}
+                                        onChange={e => setDreFrom(e.target.value)}
+                                    />
+                                </FormControl>
+                                <FormControl>
+                                    <FormLabel fontSize="sm" color="gray.500">Até</FormLabel>
+                                    <Input
+                                        type="date"
+                                        size="lg"
+                                        bg="gray.50"
+                                        border="0"
+                                        _focus={{ bg: 'white', shadow: 'outline' }}
+                                        value={dreTo}
+                                        onChange={e => setDreTo(e.target.value)}
+                                    />
+                                </FormControl>
+                                <Button
+                                    size="lg"
+                                    colorScheme="brand"
+                                    onClick={loadDRE}
+                                    isLoading={loading}
+                                    px={8}
+                                    leftIcon={<FileText size={20} />}
+                                >
+                                    DRE
+                                </Button>
+                                <Button
+                                    size="lg"
+                                    variant="ghost"
+                                    colorScheme="red"
+                                    onClick={exportPDF}
+                                    isDisabled={!dreData}
+                                    leftIcon={<Download size={20} />}
+                                >
+                                    PDF
+                                </Button>
+                            </Flex>
+                        </Box>
 
                         {dreData && (
                             <Box animation="fadeIn 0.5s">
                                 <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6} mb="8">
                                     <GridItem>
-                                        <Stat bg="green.50" p="4" borderRadius="md" border="1px" borderColor="green.100">
-                                            <StatLabel>Total Receitas</StatLabel>
-                                            <StatNumber color="green.600">
+                                        <Stat bg="white" p="6" borderRadius="xl" shadow="sm" borderLeft="4px" borderColor="green.400">
+                                            <StatLabel color="gray.500" mb={1}>Total Receitas</StatLabel>
+                                            <StatNumber fontSize="2xl" color="green.600">
                                                 {dreData.incomes.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </StatNumber>
-                                            <StatHelpText><TrendingUp size={14} style={{ display: 'inline' }} /> Receita Operacional</StatHelpText>
+                                            <StatHelpText display="flex" alignItems="center" gap={1}>
+                                                <Box as={TrendingUp} size={14} color="green.500" />
+                                                <Text fontSize="xs">Faturamento Bruto</Text>
+                                            </StatHelpText>
                                         </Stat>
                                     </GridItem>
                                     <GridItem>
-                                        <Stat bg="red.50" p="4" borderRadius="md" border="1px" borderColor="red.100">
-                                            <StatLabel>Total Despesas</StatLabel>
-                                            <StatNumber color="red.600">
+                                        <Stat bg="white" p="6" borderRadius="xl" shadow="sm" borderLeft="4px" borderColor="red.400">
+                                            <StatLabel color="gray.500" mb={1}>Total Despesas</StatLabel>
+                                            <StatNumber fontSize="2xl" color="red.600">
                                                 {dreData.expenses.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </StatNumber>
-                                            <StatHelpText><TrendingDown size={14} style={{ display: 'inline' }} /> Custos e Despesas</StatHelpText>
+                                            <StatHelpText display="flex" alignItems="center" gap={1}>
+                                                <Box as={TrendingDown} size={14} color="red.500" />
+                                                <Text fontSize="xs">Custos Operacionais</Text>
+                                            </StatHelpText>
                                         </Stat>
                                     </GridItem>
                                     <GridItem>
-                                        <Stat bg={dreData.result >= 0 ? "blue.50" : "orange.50"} p="4" borderRadius="md" border="1px" borderColor={dreData.result >= 0 ? "blue.100" : "orange.100"}>
-                                            <StatLabel>Resultado Líquido</StatLabel>
-                                            <StatNumber color={dreData.result >= 0 ? "blue.600" : "orange.600"}>
+                                        <Stat bg="white" p="6" borderRadius="xl" shadow="sm" borderLeft="4px" borderColor={dreData.result >= 0 ? "blue.400" : "orange.400"}>
+                                            <StatLabel color="gray.500" mb={1}>Resultado Líquido</StatLabel>
+                                            <StatNumber fontSize="2xl" color={dreData.result >= 0 ? "blue.600" : "orange.600"}>
                                                 {dreData.result.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </StatNumber>
-                                            <StatHelpText>Margem: {dreData.profitMargin.toFixed(2)}%</StatHelpText>
+                                            <StatHelpText>Margem de Lucro: <b>{dreData.profitMargin.toFixed(2)}%</b></StatHelpText>
                                         </Stat>
                                     </GridItem>
                                 </Grid>
 
-                                <Flex justify="flex-end" mb="4">
-                                    <Button leftIcon={<Download size={18} />} colorScheme="red" variant="outline" onClick={exportPDF}>
-                                        Exportar PDF
-                                    </Button>
-                                </Flex>
-
                                 <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8}>
                                     {/* Incomes Table */}
-                                    <Box>
-                                        <Heading size="sm" mb="3" color="green.600">Detalhamento de Receitas</Heading>
-                                        <TableContainer border="1px" borderColor="gray.200" borderRadius="md">
-                                            <Table size="sm">
-                                                <Thead bg="gray.50">
+                                    <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px" borderColor="gray.100">
+                                        <Heading size="sm" mb="4" color="green.600" display="flex" alignItems="center" gap={2}>
+                                            <Box as={TrendingUp} size={16} /> Detalhamento de Receitas
+                                        </Heading>
+                                        <TableContainer>
+                                            <Table variant="simple" size="sm">
+                                                <Thead>
                                                     <Tr>
-                                                        <Th>Categoria</Th>
-                                                        <Th isNumeric>Valor</Th>
+                                                        <Th color="gray.500">Categoria</Th>
+                                                        <Th isNumeric color="gray.500">Valor</Th>
                                                     </Tr>
                                                 </Thead>
                                                 <Tbody>
                                                     {dreData.incomes.breakdown.map((item, idx) => (
-                                                        <Tr key={idx}>
-                                                            <Td>{item.category}</Td>
-                                                            <Td isNumeric>{item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Td>
+                                                        <Tr key={idx} _hover={{ bg: 'gray.50' }}>
+                                                            <Td fontWeight="medium">{item.category}</Td>
+                                                            <Td isNumeric color="gray.700">
+                                                                {item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </Td>
                                                         </Tr>
                                                     ))}
-                                                    <Tr fontWeight="bold" bg="gray.50">
-                                                        <Td>TOTAL</Td>
-                                                        <Td isNumeric>{dreData.incomes.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Td>
+                                                    <Tr bg="green.50" fontWeight="bold">
+                                                        <Td color="green.800">TOTAL</Td>
+                                                        <Td isNumeric color="green.800">
+                                                            {dreData.incomes.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                        </Td>
                                                     </Tr>
                                                 </Tbody>
                                             </Table>
@@ -232,26 +277,32 @@ export function ReportsPage() {
                                     </Box>
 
                                     {/* Expenses Table */}
-                                    <Box>
-                                        <Heading size="sm" mb="3" color="red.600">Detalhamento de Despesas</Heading>
-                                        <TableContainer border="1px" borderColor="gray.200" borderRadius="md">
-                                            <Table size="sm">
-                                                <Thead bg="gray.50">
+                                    <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px" borderColor="gray.100">
+                                        <Heading size="sm" mb="4" color="red.600" display="flex" alignItems="center" gap={2}>
+                                            <Box as={TrendingDown} size={16} /> Detalhamento de Despesas
+                                        </Heading>
+                                        <TableContainer>
+                                            <Table variant="simple" size="sm">
+                                                <Thead>
                                                     <Tr>
-                                                        <Th>Categoria</Th>
-                                                        <Th isNumeric>Valor</Th>
+                                                        <Th color="gray.500">Categoria</Th>
+                                                        <Th isNumeric color="gray.500">Valor</Th>
                                                     </Tr>
                                                 </Thead>
                                                 <Tbody>
                                                     {dreData.expenses.breakdown.map((item, idx) => (
-                                                        <Tr key={idx}>
-                                                            <Td>{item.category}</Td>
-                                                            <Td isNumeric>{item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Td>
+                                                        <Tr key={idx} _hover={{ bg: 'gray.50' }}>
+                                                            <Td fontWeight="medium">{item.category}</Td>
+                                                            <Td isNumeric color="gray.700">
+                                                                {item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </Td>
                                                         </Tr>
                                                     ))}
-                                                    <Tr fontWeight="bold" bg="gray.50">
-                                                        <Td>TOTAL</Td>
-                                                        <Td isNumeric>{dreData.expenses.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Td>
+                                                    <Tr bg="red.50" fontWeight="bold">
+                                                        <Td color="red.800">TOTAL</Td>
+                                                        <Td isNumeric color="red.800">
+                                                            {dreData.expenses.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                        </Td>
                                                     </Tr>
                                                 </Tbody>
                                             </Table>
