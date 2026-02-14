@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { TransactionType } from '@prisma/client';
+import { AuditService } from '../audit/audit.service';
 
 interface FindAllParams {
   companyId: number;
@@ -15,7 +16,10 @@ interface FindAllParams {
 
 @Injectable()
 export class TransactionsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) { }
 
   async findAll(params: FindAllParams) {
     const { companyId, from, to, type, categoryId, paymentMethodId } = params;
@@ -34,12 +38,13 @@ export class TransactionsService {
       include: {
         category: true,
         paymentMethod: true,
+        attachments: true,
       },
     });
   }
 
-  async create(companyId: number, userId: number, dto: CreateTransactionDto) {
-    return this.prisma.transaction.create({
+  async create(userId: number, companyId: number, dto: CreateTransactionDto) {
+    const transaction = await this.prisma.transaction.create({
       data: {
         companyId,
         createdByUserId: userId,
@@ -51,10 +56,22 @@ export class TransactionsService {
         description: dto.description,
       },
     });
+
+    await this.auditService.log(
+      userId,
+      companyId,
+      'CREATE',
+      'Transaction',
+      transaction.id,
+      { amount: dto.amount, type: dto.type }
+    );
+
+    return transaction;
   }
 
   async update(
     companyId: number,
+    userId: number,
     id: number,
     dto: UpdateTransactionDto,
   ) {
@@ -64,7 +81,7 @@ export class TransactionsService {
     if (!existing) {
       throw new NotFoundException('Lançamento não encontrado');
     }
-    return this.prisma.transaction.update({
+    const updated = await this.prisma.transaction.update({
       where: { id },
       data: {
         type: dto.type ?? existing.type,
@@ -75,18 +92,44 @@ export class TransactionsService {
         description: dto.description ?? existing.description,
       },
     });
+
+    await this.auditService.log(
+      userId,
+      companyId,
+      'UPDATE',
+      'Transaction',
+      id,
+      {
+        changes: dto,
+        originalAmount: existing.amount,
+        newAmount: updated.amount
+      }
+    );
+
+    return updated;
   }
 
-  async remove(companyId: number, id: number) {
+  async remove(companyId: number, userId: number, id: number) {
     const existing = await this.prisma.transaction.findFirst({
       where: { id, companyId },
     });
     if (!existing) {
       throw new NotFoundException('Lançamento não encontrado');
     }
-    return this.prisma.transaction.delete({
+    const deleted = await this.prisma.transaction.delete({
       where: { id },
     });
+
+    await this.auditService.log(
+      userId,
+      companyId,
+      'DELETE',
+      'Transaction',
+      id,
+      { amount: existing.amount, date: existing.date, description: existing.description }
+    );
+
+    return deleted;
   }
 
   async export(params: FindAllParams) {

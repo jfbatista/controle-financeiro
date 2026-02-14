@@ -304,4 +304,99 @@ export class ReportsService {
       })),
     };
   }
+
+  async getDRE(companyId: number, from: string, to: string) {
+    const startDate = new Date(from);
+    const endDate = new Date(to);
+
+    // Ensure endDate includes the whole day
+    endDate.setHours(23, 59, 59, 999);
+
+    const whereBase = {
+      companyId,
+      date: {
+        gte: startDate,
+        lte: endDate,
+      },
+    };
+
+    const [incomes, expenses] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where: { ...whereBase, type: TransactionType.INCOME },
+        include: { category: true },
+      }),
+      this.prisma.transaction.findMany({
+        where: { ...whereBase, type: TransactionType.EXPENSE },
+        include: { category: true },
+      }),
+    ]);
+
+    // Group by Category
+    const groupByCategory = (transactions: any[]) => {
+      const map = new Map<string, number>();
+      transactions.forEach((t) => {
+        const catName = t.category?.name || 'Sem Categoria';
+        const val = Number(t.amount);
+        map.set(catName, (map.get(catName) || 0) + val);
+      });
+      return Array.from(map.entries())
+        .map(([category, amount]) => ({ category, amount }))
+        .sort((a, b) => b.amount - a.amount);
+    };
+
+    const incomeBreakdown = groupByCategory(incomes);
+    const expenseBreakdown = groupByCategory(expenses);
+
+    const totalIncome = incomeBreakdown.reduce((sum, item) => sum + item.amount, 0);
+    const totalExpense = expenseBreakdown.reduce((sum, item) => sum + item.amount, 0);
+
+    return {
+      period: { from, to },
+      incomes: {
+        total: totalIncome,
+        breakdown: incomeBreakdown,
+      },
+      expenses: {
+        total: totalExpense,
+        breakdown: expenseBreakdown,
+      },
+      result: totalIncome - totalExpense,
+      profitMargin: totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0,
+    };
+  }
+
+  async getBalanceSheet(companyId: number, date: string) {
+    const targetDate = new Date(date);
+    targetDate.setHours(23, 59, 59, 999);
+
+    // Cumulative totals up to targetDate
+    const [totalIncome, totalExpense] = await Promise.all([
+      this.prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: {
+          companyId,
+          type: TransactionType.INCOME,
+          date: { lte: targetDate },
+        },
+      }),
+      this.prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: {
+          companyId,
+          type: TransactionType.EXPENSE,
+          date: { lte: targetDate },
+        },
+      }),
+    ]);
+
+    const income = Number(totalIncome._sum.amount ?? 0);
+    const expense = Number(totalExpense._sum.amount ?? 0);
+
+    return {
+      date,
+      assets: income,
+      liabilities: expense,
+      equity: income - expense, // Accumulated Result
+    };
+  }
 }

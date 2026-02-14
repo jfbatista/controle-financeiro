@@ -30,6 +30,8 @@ import {
   Wallet,
   Users,
   Settings,
+  Shield,
+  FileBarChart,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/auth';
 import { Permission } from '../../config/permissions';
@@ -47,6 +49,8 @@ const LinkItems = [
   { name: 'Usuários', icon: Wallet, path: '/settings/users', permission: Permission.USER_VIEW },
   { name: 'Grupos', icon: Users, path: '/settings/groups', permission: Permission.USER_VIEW },
   { name: 'Empresa', icon: Settings, path: '/settings/company', permission: Permission.COMPANY_MANAGE },
+  { name: 'Auditoria', icon: Shield, path: '/settings/audit', permission: Permission.AUDIT_VIEW },
+  { name: 'Relatórios', icon: FileBarChart, path: '/reports', permission: Permission.REPORT_VIEW },
 ];
 
 export function MainLayout({ children }: MainLayoutProps) {

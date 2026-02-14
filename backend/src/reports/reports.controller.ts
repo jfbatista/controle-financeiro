@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -10,12 +10,28 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) { }
 
   @Get('dashboard')
-  dashboard(
-    @CurrentUser() user: CurrentUserData,
+  async getDashboard(
+    @Request() req,
     @Query('from') from?: string,
     @Query('to') to?: string,
   ) {
-    return this.reportsService.dashboard(user.companyId, from, to);
+    return this.reportsService.dashboard(req.user.companyId, from, to);
+  }
+
+  @Get('dre')
+  async getDRE(
+    @Request() req,
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    if (!from || !to) {
+      // Default to current month if not provided
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+      return this.reportsService.getDRE(req.user.companyId, from || firstDay, to || lastDay);
+    }
+    return this.reportsService.getDRE(req.user.companyId, from, to);
   }
 
   @Get('cash-flow')
@@ -47,6 +63,15 @@ export class ReportsController {
   ) {
     const limitNum = limit ? parseInt(limit, 10) : 5;
     return this.reportsService.getTopTransactions(user.companyId, limitNum);
+  }
+
+  @Get('balance-sheet')
+  getBalanceSheet(
+    @CurrentUser() user: CurrentUserData,
+    @Query('date') date?: string,
+  ) {
+    const targetDate = date || new Date().toISOString().slice(0, 10);
+    return this.reportsService.getBalanceSheet(user.companyId, targetDate);
   }
 }
 

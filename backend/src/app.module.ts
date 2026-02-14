@@ -12,22 +12,24 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
 import { RecurringBillsModule } from './recurring-bills/recurring-bills.module';
 import { GroupsModule } from './groups/groups.module';
+import { AuditModule } from './audit/audit.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
     UsersModule,
     CompaniesModule,
+    TransactionsModule,
+    GroupsModule,
     CategoriesModule,
     PaymentMethodsModule,
-    TransactionsModule,
     ReportsModule,
     RecurringBillsModule,
-    GroupsModule,
+    AuditModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

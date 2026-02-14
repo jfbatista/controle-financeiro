@@ -30,10 +30,11 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Plus, Filter, Trash2, Edit2, Check, Download } from 'lucide-react';
+import { Plus, Filter, Trash2, Edit2, Check, Download, Paperclip } from 'lucide-react';
 import { Permission } from '../config/permissions';
 import { useAuthStore } from '../store/auth';
 import { saveAs } from 'file-saver';
+import { AttachmentsModal } from '../components/AttachmentsModal';
 
 type TransactionType = 'INCOME' | 'EXPENSE';
 
@@ -48,6 +49,14 @@ interface PaymentMethod {
   name: string;
 }
 
+interface Attachment {
+  id: number;
+  filename: string;
+  size: number;
+  mimetype: string;
+  createdAt: string;
+}
+
 interface Transaction {
   id: number;
   type: TransactionType;
@@ -58,6 +67,7 @@ interface Transaction {
   paymentMethod: PaymentMethod;
   categoryId: number;
   paymentMethodId: number;
+  attachments: Attachment[];
 }
 
 export function TransactionsPage() {
@@ -83,6 +93,10 @@ export function TransactionsPage() {
   // Edit States
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editingItem, setEditingItem] = useState<any | null>(null);
+
+  // Attachments States
+  const { isOpen: isAttachmentsOpen, onOpen: onAttachmentsOpen, onClose: onAttachmentsClose } = useDisclosure();
+  const [selectedTransactionForAttachments, setSelectedTransactionForAttachments] = useState<Transaction | null>(null);
 
   async function loadLookups() {
     try {
@@ -178,6 +192,11 @@ export function TransactionsPage() {
       description: t.description || '',
     });
     onOpen();
+  }
+
+  function openAttachmentsModal(t: Transaction) {
+    setSelectedTransactionForAttachments(t);
+    onAttachmentsOpen();
   }
 
   async function handleUpdate() {
@@ -367,6 +386,23 @@ export function TransactionsPage() {
                   <Td color="gray.600" fontSize="sm">{t.description}</Td>
                   <Td textAlign="center">
                     <HStack justify="center" spacing={2}>
+                      <IconButton
+                        aria-label="Anexos"
+                        icon={
+                          <HStack spacing={1}>
+                            <Paperclip size={16} />
+                            {t.attachments?.length > 0 && (
+                              <Badge colorScheme="blue" fontSize="xx-small" borderRadius="full">
+                                {t.attachments.length}
+                              </Badge>
+                            )}
+                          </HStack>
+                        }
+                        size="sm"
+                        variant="ghost"
+                        colorScheme={t.attachments?.length > 0 ? "blue" : "gray"}
+                        onClick={() => openAttachmentsModal(t)}
+                      />
                       {can(Permission.TRANSACTION_EDIT) && (
                         <IconButton
                           aria-label="Editar"
@@ -484,6 +520,17 @@ export function TransactionsPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Attachments Modal */}
+      {selectedTransactionForAttachments && (
+        <AttachmentsModal
+          isOpen={isAttachmentsOpen}
+          onClose={onAttachmentsClose}
+          transactionId={selectedTransactionForAttachments.id}
+          existingAttachments={selectedTransactionForAttachments.attachments}
+          onUpdate={loadTransactions}
+        />
+      )}
     </Box>
   );
 }

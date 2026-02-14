@@ -16,7 +16,11 @@ export enum Permission {
 
     // Settings (General)
     SETTINGS_MANAGE = 'SETTINGS_MANAGE',
+    // Company
     COMPANY_MANAGE = 'COMPANY_MANAGE',
+
+    // Audit
+    AUDIT_VIEW = 'AUDIT_VIEW',
 
     // Categories
     CATEGORY_VIEW = 'CATEGORY_VIEW',

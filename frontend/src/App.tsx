@@ -9,8 +9,10 @@ import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
 import { ManageUsersPage } from './pages/ManageUsersPage';
 import { ManageGroupsPage } from './pages/ManageGroupsPage';
 import { CompanySettingsPage } from './pages/CompanySettingsPage';
+import { AuditLogsPage } from './pages/AuditLogsPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RecurringBillsPage } from './pages/RecurringBillsPage';
+import { ReportsPage } from './pages/ReportsPage';
 import { MainLayout } from './components/layout/MainLayout';
 import { useAuthStore } from './store/auth';
 
@@ -115,6 +117,26 @@ function App() {
           <ProtectedRoute>
             <MainLayout>
               <CompanySettingsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings/audit"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <AuditLogsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ReportsPage />
             </MainLayout>
           </ProtectedRoute>
         }

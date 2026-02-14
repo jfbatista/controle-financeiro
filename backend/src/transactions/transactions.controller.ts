@@ -81,7 +81,7 @@ export class TransactionsController {
     @Request() req,
     @Body() dto: CreateTransactionDto,
   ) {
-    return this.transactionsService.create(req.user.companyId, req.user.userId, dto);
+    return this.transactionsService.create(req.user.userId, req.user.companyId, dto);
   }
 
   @Put(':id')
@@ -91,7 +91,7 @@ export class TransactionsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(req.user.companyId, id, dto);
+    return this.transactionsService.update(req.user.companyId, req.user.userId, id, dto);
   }
 
   @Delete(':id')
@@ -100,7 +100,7 @@ export class TransactionsController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.transactionsService.remove(req.user.companyId, id);
+    return this.transactionsService.remove(req.user.companyId, req.user.userId, id);
   }
 }
 

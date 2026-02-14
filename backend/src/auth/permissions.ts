@@ -39,6 +39,9 @@ export enum Permission {
 
     // Company
     COMPANY_MANAGE = 'COMPANY_MANAGE',
+
+    // Audit
+    AUDIT_VIEW = 'AUDIT_VIEW',
 }
 
 export const RolePermissions: Record<Role, Permission[]> = {
@@ -54,6 +57,7 @@ export const RolePermissions: Record<Role, Permission[]> = {
         Permission.REPORT_VIEW,
         Permission.SETTINGS_MANAGE,
         Permission.COMPANY_MANAGE,
+        Permission.AUDIT_VIEW,
         Permission.CATEGORY_VIEW,
         Permission.CATEGORY_CREATE,
         Permission.CATEGORY_EDIT,
@@ -79,6 +83,7 @@ export const RolePermissions: Record<Role, Permission[]> = {
         Permission.REPORT_VIEW,
         Permission.SETTINGS_MANAGE,
         Permission.COMPANY_MANAGE,
+        Permission.AUDIT_VIEW,
         Permission.CATEGORY_VIEW,
         Permission.CATEGORY_CREATE,
         Permission.CATEGORY_EDIT,

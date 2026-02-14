@@ -44,6 +44,7 @@ const PERMISSION_LABELS: Record<Permission, string> = {
     [Permission.USER_EDIT]: 'Editar Usuários',
     [Permission.USER_DELETE]: 'Excluir Usuários',
     [Permission.REPORT_VIEW]: 'Visualizar Relatórios',
+    [Permission.AUDIT_VIEW]: 'Visualizar Auditoria',
     [Permission.SETTINGS_MANAGE]: 'Gerenciar Configurações',
     [Permission.COMPANY_MANAGE]: 'Gerenciar Empresa',
     [Permission.CATEGORY_VIEW]: 'Visualizar Categorias',
@@ -73,6 +74,12 @@ const PERMISSION_GROUPS = {
         Permission.RECURRING_BILL_EDIT,
         Permission.RECURRING_BILL_DELETE,
     ],
+    'Relatórios': [
+        Permission.REPORT_VIEW,
+    ],
+    'Auditoria': [
+        Permission.AUDIT_VIEW,
+    ],
     'Usuários': [
         Permission.USER_VIEW,
         Permission.USER_INVITE,
@@ -91,8 +98,7 @@ const PERMISSION_GROUPS = {
         Permission.PAYMENT_METHOD_EDIT,
         Permission.PAYMENT_METHOD_DELETE,
     ],
-    'Outros': [
-        Permission.REPORT_VIEW,
+    'Configurações': [
         Permission.SETTINGS_MANAGE,
         Permission.COMPANY_MANAGE,
     ],
