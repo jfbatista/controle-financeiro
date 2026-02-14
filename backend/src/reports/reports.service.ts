@@ -86,7 +86,8 @@ export class ReportsService {
       totalIncomes,
       totalExpenses,
       netResult,
-      byCategory: byCategoryWithNames,
+      expensesByCategory,
+      history,
       transactions,
     };
   }
